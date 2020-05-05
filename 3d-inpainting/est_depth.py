@@ -35,7 +35,7 @@ def run_samples(samples):
     print("Running on Device: {device}")
     print("Set up time: " + clock.run_time())
 
-    for idx in range(samples.num_ims):
+    for idx in range(samples.data_num):
         print(samples.im_file[idx])
         depth = run_depth(samples.im_file[idx],
                           config['src_folder'],
@@ -55,8 +55,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     config = yaml.load(open(args.config, 'r'))
 
-    samples = utils_extra.im_data(config['src_folder'],
+    samples = utils_extra.data_files(config['src_folder'],
                                   config['depth_folder'],
                                   config['mesh_folder'])
-
+    samples.collect_rgb()
     run_samples(samples)
