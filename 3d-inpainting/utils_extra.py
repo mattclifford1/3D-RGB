@@ -1,5 +1,6 @@
 import time
 import os
+import numpy as np
 
 def set_device(config):
     if isinstance(config["gpu_ids"], int) and (config["gpu_ids"] >= 0):
@@ -8,6 +9,15 @@ def set_device(config):
         device = "cpu"
     print("Running on Device: " + device)
     return device
+
+
+def int_mtx_CPY(image):
+    H, W = image.shape[:2]
+    int_mtx = np.array([[max(H, W), 0, W//2], [0, max(H, W), H//2], [0, 0, 1]]).astype(np.float32)
+    if int_mtx.max() > 1:
+        int_mtx[0, :] = int_mtx[0, :] / float(W)
+        int_mtx[1, :] = int_mtx[1, :] / float(H)
+    return int_mtx
 
 
 class timer:
