@@ -5,6 +5,7 @@ from MiDaS.run import run_depth
 from MiDaS.monodepth_net import MonoDepthNet
 import MiDaS.MiDaS_utils as MiDaS_utils
 import utils_extra
+import cv2
 
 
 def run_samples(samples, config):
@@ -22,6 +23,10 @@ def run_samples(samples, config):
                           MiDaS_utils,
                           target_w=640.0)
         np.save(samples.depth_file[idx], depth)
+        print(np.max(depth))
+        depth = (depth+np.min(depth))/np.max(depth)
+        depth = depth*255
+        cv2.imwrite(samples.depth_file[idx].split('.')[0]+'.png', depth)
 
         print("Depth estimated in: " + clock.run_time())
 
