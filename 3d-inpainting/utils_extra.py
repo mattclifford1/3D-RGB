@@ -1,6 +1,7 @@
 import time
 import os
 import numpy as np
+import utils
 
 def set_device(config):
     if isinstance(config["gpu_ids"], int) and (config["gpu_ids"] >= 0):
@@ -18,6 +19,39 @@ def int_mtx_CPY(image):
         int_mtx[0, :] = int_mtx[0, :] / float(W)
         int_mtx[1, :] = int_mtx[1, :] / float(H)
     return int_mtx
+
+def tgts_poses_CPY(config):
+    tgts_poses = []
+    generic_pose = np.eye(4)
+    for traj_idx in range(len(config['traj_types'])):
+        tgt_poses = []
+        sx, sy, sz = utils.path_planning(config['num_frames'], config['x_shift_range'][traj_idx], config['y_shift_range'][traj_idx],
+                                   config['z_shift_range'][traj_idx], path_type=config['traj_types'][traj_idx])
+        for xx, yy, zz in zip(sx, sy, sz):
+            tgt_poses.append(generic_pose * 1.)
+            tgt_poses[-1][:3, -1] = np.array([xx, yy, zz])
+        tgts_poses += [tgt_poses]
+    return tgts_poses
+
+
+def tgt_name_CPY(depth_file):
+    tgt_name = [os.path.splitext(os.path.basename(depth_file))[0]]
+    return tgt_name
+
+
+def tgt_pose_CPY():
+    generic_pose = np.eye(4)
+    tgt_pose = [[generic_pose * 1]]
+    tgt_pose = generic_pose * 1
+    return tgt_pose
+
+
+def vid_meta_CPY(config, depth_file):
+    config['output_h'], config['output_w'] = np.load(depth_file).shape[:2]
+    frac = config['longer_side_len'] / max(config['output_h'], config['output_w'])
+    config['output_h'], config['output_w'] = int(config['output_h'] * frac), int(config['output_w'] * frac)
+    config['original_h'], config['original_w'] = config['output_h'], config['output_w']
+    return config
 
 
 class timer:
