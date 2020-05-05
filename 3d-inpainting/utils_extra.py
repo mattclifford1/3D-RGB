@@ -45,7 +45,7 @@ class data_files:
         self.im_file = self.clean(self.im_file, self.im_formats, self.im_dir)
         self.depth_file = []
         self.ldi_file = []
-        self.make_extra_names([[self.depth_file, self.depth_write, self.depth_dir],
+        self.make_extra_files([[self.depth_file, self.depth_write, self.depth_dir],
                                [self.ldi_file, self.ldi_write, self.ldi_dir]])
 
 
@@ -53,12 +53,15 @@ class data_files:
         self.depth_file = os.listdir(self.depth_dir)
         self.depth_file = self.clean(self.depth_file, self.depth_formats, self.depth_dir)
         self.ldi_file = []
-        self.make_extra_names([[self.ldi_file, self.ldi_write, self.ldi_dir]])
+        self.make_extra_files([[self.ldi_file, self.ldi_write, self.ldi_dir]])
+        self.im_file = self.collect_extra_files(self.im_dir)
 
 
     def collect_ldi(self):
         self.ldi_file = os.listdir(self.ldi_dir)
         self.ldi_file = self.clean(self.ldi_file, self.ldi_formats, self.ldi_dir)
+        self.im_file = self.collect_extra_files(self.im_dir)
+        self.depth_file = self.collect_extra_files(self.depth_dir)
 
 
     def clean(self, file_list, supported_formats, dir):
@@ -66,16 +69,29 @@ class data_files:
         remove all non-supported file types and add the directory
         into the file list
         '''
-        for ind, file in enumerate(file_list):
+        for file in file_list:
             if file.split('.')[-1] not in supported_formats:
-                file_list.pop(ind)
+                file_list.remove(file)
         self.base_file = [file.split('.')[0] for file in file_list]
         file_list = [os.path.join(dir, file) for file in file_list]
         self.data_num = len(file_list)
         return file_list
 
 
-    def make_extra_names(self, list_data):
+    def make_extra_files(self, list_data):
         for tmp_list, file_format, file_dir in list_data:
             for base in self.base_file:
                 tmp_list.append(os.path.join(file_dir, base+file_format))
+
+
+    def collect_extra_files(self, dir):
+        '''
+        WARNING: this quick and easy method assumes os.listdir returns
+        in the exact same order for each dir
+        '''
+        tmp_list = os.listdir(dir)
+        for file in tmp_list:
+            if file.split('.')[0] not in self.base_file:
+                tmp_list.remove(file)
+        tmp_list = [os.path.join(dir, file) for file in tmp_list]
+        return tmp_list
