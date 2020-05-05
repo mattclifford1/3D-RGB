@@ -1,5 +1,6 @@
 import argparse
 import yaml
+import numpy as np
 from MiDaS.run import run_depth
 from MiDaS.monodepth_net import MonoDepthNet
 import MiDaS.MiDaS_utils as MiDaS_utils
