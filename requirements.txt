@@ -1,0 +1,10 @@
+opencv-python==4.2.0.32
+vispy==0.6.4
+moviepy==1.0.2
+transforms3d==0.3.1
+networkx==2.3
+# Cython
+# cynetworkx
+scikit-image
+torch==1.4.0
+torchvision==0.5.0
