@@ -22,8 +22,8 @@ def run_samples(samples, config):
                           MonoDepthNet,
                           MiDaS_utils,
                           target_w=640.0)
+        # save results
         np.save(samples.depth_file[idx], depth)
-        print(np.max(depth))
         depth = (depth+np.min(depth))/np.max(depth)
         depth = depth*255
         cv2.imwrite(samples.depth_file[idx].split('.')[0]+'.png', depth)

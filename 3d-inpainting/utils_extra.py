@@ -62,13 +62,20 @@ class timer:
     def run_time(self):
         tmp = time.time() - self.temp_time
         self.reset()
-        return "{:.2f}".format(tmp)
+        return self.format_str(tmp)
 
     def reset(self):
         self.temp_time = time.time()
 
     def total_time(self):
-        return "{:.2f}".format(time.time() - self.start_time)
+        return self.format_str(time.time() - self.start_time)
+
+    def format_str(self, time_float):
+        if time_float > 60:
+            time_float /= 60
+            return "{:.2f}".format(time_float) + ' mins'
+        else:
+            return "{:.2f}".format(time_float) + ' secs'
 
 
 class data_files:

@@ -13,7 +13,7 @@ specific: ''
 longer_side_len: 960
 src_folder: image
 depth_folder: depth
-mesh_folder: mesh
+mesh_folder: ldi
 video_folder: video
 load_ply: False
 save_ply: True

@@ -47,7 +47,7 @@ def run_samples(samples, config):
         # load LDI
         verts, colors, faces, Height, Width, hFov, vFov = read_ply(samples.ldi_file[idx])
 
-        print("Loading LDI took: " + clock.run_time() + 'secs')
+        print("Loaded LDI in: " + clock.run_time())
         videos_poses, video_basename = copy.deepcopy(tgts_poses), tgt_name
         top = (config.get('original_h') // 2 - int_mtx[1, 2] * config['output_h'])
         left = (config.get('original_w') // 2 - int_mtx[0, 2] * config['output_w'])
@@ -58,6 +58,7 @@ def run_samples(samples, config):
                             image.copy(), copy.deepcopy(int_mtx), config, image,
                             videos_poses, video_basename, config.get('original_h'), config.get('original_w'), border=border, depth=depth, normal_canvas=normal_canvas, all_canvas=all_canvas,
                             mean_loc_depth=mean_loc_depth)
+        print("Constructed videos in: " + clock.run_time())
 
 
 if __name__ == '__main__':

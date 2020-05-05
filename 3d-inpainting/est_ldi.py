@@ -54,16 +54,13 @@ def run_samples(samples, config):
             depth = vis_depths[-1]
             model = None
             torch.cuda.empty_cache()
-            print("Start Running 3D_Photo ...")
-            print(f"Loading edge model at {time.time()}")
             depth_edge_model = Inpaint_Edge_Net(init_weights=True)
             depth_edge_weight = torch.load(config['depth_edge_model_ckpt'],
                                            map_location=torch.device(device))
             depth_edge_model.load_state_dict(depth_edge_weight)
             depth_edge_model = depth_edge_model.to(device)
             depth_edge_model.eval()
-
-            print(f"Loading depth model at {time.time()}")
+            print("Loaded edge model in: " + clock.run_time())
             depth_feat_model = Inpaint_Depth_Net()
             depth_feat_weight = torch.load(config['depth_feat_model_ckpt'],
                                            map_location=torch.device(device))
@@ -71,7 +68,7 @@ def run_samples(samples, config):
             depth_feat_model = depth_feat_model.to(device)
             depth_feat_model.eval()
             depth_feat_model = depth_feat_model.to(device)
-            print(f"Loading rgb model at {time.time()}")
+            print("Loaded depth model in: " + clock.run_time())
             rgb_model = Inpaint_Color_Net()
             rgb_feat_weight = torch.load(config['rgb_feat_model_ckpt'],
                                          map_location=torch.device(device))
@@ -79,8 +76,8 @@ def run_samples(samples, config):
             rgb_model.eval()
             rgb_model = rgb_model.to(device)
             graph = None
-
-            print(f"Writing depth ply (and basically doing everything) at {time.time()}")
+            print("Loaded rgb model in: " + clock.run_time())
+            print("======= Starting LDI estimation ======")
             rt_info = write_ply(image,
                                   depth,
                                   int_mtx,
@@ -90,20 +87,8 @@ def run_samples(samples, config):
                                   depth_edge_model,
                                   depth_edge_model,
                                   depth_feat_model)
-
-            if rt_info is False:
-                continue
-            rgb_model = None
-            color_feat_model = None
-            depth_edge_model = None
-            depth_feat_model = None
+            print("Estimated LDI in: " + clock.run_time())
             torch.cuda.empty_cache()
-        if config['save_ply'] is True or config['load_ply'] is True:
-            verts, colors, faces, Height, Width, hFov, vFov = read_ply(samples.ldi_file[idx])
-        else:
-            verts, colors, faces, Height, Width, hFov, vFov = rt_info
-
-
 
 
 if __name__ == '__main__':
