@@ -1,6 +1,15 @@
 import time
 import os
 
+def set_device(config):
+    if isinstance(config["gpu_ids"], int) and (config["gpu_ids"] >= 0):
+        device = config["gpu_ids"]
+    else:
+        device = "cpu"
+    print("Running on Device: " + device)
+    return device
+
+
 class timer:
     def __init__(self):
         self.start_time = time.time()

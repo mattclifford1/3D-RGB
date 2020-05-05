@@ -1,19 +1,14 @@
 
 import utils_extra
 
-def run_samples(samples):
+def run_samples(samples, config):
     clock = utils_extra.timer()
-
-    if isinstance(config["gpu_ids"], int) and (config["gpu_ids"] >= 0):
-        device = config["gpu_ids"]
-    else:
-        device = "cpu"
-
-    print("Running on Device: {device}")
+    device = utils_extra.set_device(config)
     print("Set up time: " + clock.run_time())
 
     for idx in range(samples.data_num):
         print(samples.depth_file[idx])
+
 
 
 
@@ -27,4 +22,4 @@ if __name__ == '__main__':
                                   config['depth_folder'],
                                   config['mesh_folder'])
     samples.collect_depth()
-    run_samples(samples)
+    run_samples(samples, config)
