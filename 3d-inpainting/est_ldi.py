@@ -27,12 +27,8 @@ import utils_extra
 def run_samples(samples, config):
     clock = utils_extra.timer()
     device = utils_extra.set_device(config)
-    print("Set up time: " + clock.run_time())
-
-    for idx in range(samples.data_num):
-        print(samples.im_file[idx])
-        print(samples.depth_file[idx])
-        print(samples.ldi_file[idx])
+    print('Estimating Frames...')
+    for idx in from tqdm import tqdm(range(samples.data_num)):
         image = imageio.imread(samples.im_file[idx])
         int_mtx = utils_extra.int_mtx_CPY(image)
 
@@ -60,7 +56,8 @@ def run_samples(samples, config):
             depth_edge_model.load_state_dict(depth_edge_weight)
             depth_edge_model = depth_edge_model.to(device)
             depth_edge_model.eval()
-            print("Loaded edge model in: " + clock.run_time())
+            if config['verbose']:
+                print("Loaded edge model in: " + clock.run_time())
             depth_feat_model = Inpaint_Depth_Net()
             depth_feat_weight = torch.load(config['depth_feat_model_ckpt'],
                                            map_location=torch.device(device))
@@ -68,7 +65,8 @@ def run_samples(samples, config):
             depth_feat_model = depth_feat_model.to(device)
             depth_feat_model.eval()
             depth_feat_model = depth_feat_model.to(device)
-            print("Loaded depth model in: " + clock.run_time())
+            if config['verbose']:
+                print("Loaded depth model in: " + clock.run_time())
             rgb_model = Inpaint_Color_Net()
             rgb_feat_weight = torch.load(config['rgb_feat_model_ckpt'],
                                          map_location=torch.device(device))
@@ -76,8 +74,9 @@ def run_samples(samples, config):
             rgb_model.eval()
             rgb_model = rgb_model.to(device)
             graph = None
-            print("Loaded rgb model in: " + clock.run_time())
-            print("======= Starting LDI estimation ======")
+            if config['verbose']:
+                print("Loaded rgb model in: " + clock.run_time())
+                print("======= Starting LDI estimation ======")
             rt_info = write_ply(image,
                                   depth,
                                   int_mtx,
@@ -87,8 +86,10 @@ def run_samples(samples, config):
                                   depth_edge_model,
                                   depth_edge_model,
                                   depth_feat_model)
-            print("Estimated LDI in: " + clock.run_time())
             torch.cuda.empty_cache()
+            if config['verbose']:
+                print("Estimated LDI in: " + clock.run_time())
+        print("Estimated frames in: " + clock.run_time())
 
 
 if __name__ == '__main__':

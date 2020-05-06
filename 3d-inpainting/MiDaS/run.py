@@ -11,7 +11,7 @@ import cv2
 import imageio
 
 
-def run_depth(img_name, input_path, output_path, model_path, Net, utils, target_w=None):
+def run_depth(img_name, input_path, output_path, model_path, Net, utils, target_w=None, device='cpu'):
     """Run MonoDepthNN to compute depth maps.
 
     Args:
@@ -20,8 +20,7 @@ def run_depth(img_name, input_path, output_path, model_path, Net, utils, target_
         model_path (str): path to saved model
     """
     # select device
-    device = torch.device("cpu")
-    print("device: %s" % device)
+    device = torch.device(device)
 
     # load network
     model = Net(model_path)
