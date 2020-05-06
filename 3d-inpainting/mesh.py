@@ -2233,7 +2233,9 @@ def output_3d_photo(verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, 
     for video_pose, video_traj_type in zip(videos_poses, video_traj_types):
         stereos = []
         tops = []; buttoms = []; lefts = []; rights = []
+        # make frames 
         for tp_id, tp in enumerate(video_pose):
+            print(tp_id)
             rel_pose = np.linalg.inv(np.dot(tp, np.linalg.inv(ref_pose)))
             axis, angle = transforms3d.axangles.mat2axangle(rel_pose[0:3, 0:3])
             normal_canvas.rotate(axis=axis, angle=(angle*180)/np.pi)

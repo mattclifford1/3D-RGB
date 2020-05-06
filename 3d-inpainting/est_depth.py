@@ -29,8 +29,7 @@ def run_samples(samples, config):
         cv2.imwrite(samples.depth_file[idx].split('.')[0]+'.png', depth)
         if config['verbose']:
             print("Depth estimated in: " + clock.run_time())
-    print("Estimated frames in: " + clock.run_time())
-
+    print("Estimated frames in: " + clock.total_time())
 
 
 if __name__ == '__main__':

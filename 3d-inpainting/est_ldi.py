@@ -89,7 +89,7 @@ def run_samples(samples, config):
             torch.cuda.empty_cache()
             if config['verbose']:
                 print("Estimated LDI in: " + clock.run_time())
-        print("Estimated frames in: " + clock.run_time())
+        print("Estimated frames in: " + clock.total_time())
 
 
 if __name__ == '__main__':

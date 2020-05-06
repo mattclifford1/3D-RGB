@@ -27,13 +27,9 @@ import utils_extra
 def run_samples(samples, config):
     clock = utils_extra.timer()
     device = utils_extra.set_device(config)
-    print("Set up time: " + clock.run_time())
-
+    print('Contructing Video...')
     for idx in range(samples.data_num):
         config = utils_extra.vid_meta_CPY(config, samples.depth_file[idx])
-        print(samples.im_file[idx])
-        print(samples.depth_file[idx])
-        print(samples.ldi_file[idx])
         image = imageio.imread(samples.im_file[idx])
         depth = read_MiDaS_depth(samples.depth_file[idx], 3.0, config['output_h'], config['output_w'])
         mean_loc_depth = depth[depth.shape[0]//2, depth.shape[1]//2]
@@ -46,8 +42,8 @@ def run_samples(samples, config):
         normal_canvas, all_canvas = None, None
         # load LDI
         verts, colors, faces, Height, Width, hFov, vFov = read_ply(samples.ldi_file[idx])
-
-        print("Loaded LDI in: " + clock.run_time())
+        if config['verbose']:
+            print("Loaded LDI in: " + clock.run_time())
         videos_poses, video_basename = copy.deepcopy(tgts_poses), tgt_name
         top = (config.get('original_h') // 2 - int_mtx[1, 2] * config['output_h'])
         left = (config.get('original_w') // 2 - int_mtx[0, 2] * config['output_w'])
@@ -58,7 +54,9 @@ def run_samples(samples, config):
                             image.copy(), copy.deepcopy(int_mtx), config, image,
                             videos_poses, video_basename, config.get('original_h'), config.get('original_w'), border=border, depth=depth, normal_canvas=normal_canvas, all_canvas=all_canvas,
                             mean_loc_depth=mean_loc_depth)
-        print("Constructed videos in: " + clock.run_time())
+        if config['verbose']:
+            print("Constructed video in: " + clock.run_time())
+    print("Constructed videos in: " + clock.total_time())
 
 
 if __name__ == '__main__':
