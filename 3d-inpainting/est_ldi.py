@@ -28,7 +28,7 @@ def run_samples(samples, config):
     clock = utils_extra.timer()
     device = utils_extra.set_device(config)
     print('Estimating Frames...')
-    for idx in from tqdm import tqdm(range(samples.data_num)):
+    for idx in tqdm(range(samples.data_num)):
         image = imageio.imread(samples.im_file[idx])
         int_mtx = utils_extra.int_mtx_CPY(image)
 

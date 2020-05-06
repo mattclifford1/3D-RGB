@@ -129,9 +129,12 @@ class data_files:
         remove all non-supported file types and add the directory
         into the file list
         '''
+        remove_list = []
         for file in file_list:
             if file.split('.')[-1] not in supported_formats:
-                file_list.remove(file)
+                remove_list.append(file)
+        for remove_file in remove_list:
+            file_list.remove(remove_file)
         self.base_file = [file.split('.')[0] for file in file_list]
         file_list = [os.path.join(dir, file) for file in file_list]
         self.data_num = len(file_list)
