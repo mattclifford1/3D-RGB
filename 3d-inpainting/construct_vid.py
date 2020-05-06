@@ -26,7 +26,6 @@ import utils_extra
 
 def run_samples(samples, config):
     clock = utils_extra.timer()
-    device = utils_extra.set_device(config)
     print('Contructing Video...')
     for idx in range(samples.data_num):
         config = utils_extra.vid_meta_CPY(config, samples.depth_file[idx])

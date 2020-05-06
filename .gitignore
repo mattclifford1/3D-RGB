@@ -4,9 +4,22 @@
 
 # Data - ims, vids numpy and ldi
 */image/*
+*/*/image/*
 */video/*
+*/*/video/*
+*/frames/*
+*/*/frames/*
+*/depth/*
+*/*/depth/*
+*/ldi/*
+*/*/ldi/*
 *.npy
 *.ply
+*.jpg
+*.jpeg
+*.png
+*.mp4
+*.mov
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -138,8 +151,3 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
-*.jpeg
-*.png
-*.jpg
-*.mp4
-*.mov

@@ -2167,7 +2167,6 @@ class Canvas_view():
 def output_3d_photo(verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, video_traj_types, ref_pose,
                     output_dir, ref_image, int_mtx, config, image, videos_poses, video_basename, original_H=None, original_W=None,
                     border=None, depth=None, normal_canvas=None, all_canvas=None, mean_loc_depth=None):
-
     cam_mesh = netx.Graph()
     cam_mesh.graph['H'] = Height
     cam_mesh.graph['W'] = Width
@@ -2233,7 +2232,7 @@ def output_3d_photo(verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, 
     for video_pose, video_traj_type in zip(videos_poses, video_traj_types):
         stereos = []
         tops = []; buttoms = []; lefts = []; rights = []
-        # make frames 
+        # make frames
         for tp_id, tp in enumerate(video_pose):
             print(tp_id)
             rel_pose = np.linalg.inv(np.dot(tp, np.linalg.inv(ref_pose)))
@@ -2261,6 +2260,11 @@ def output_3d_photo(verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, 
                 o_r = int(W_c * config['crop_border'][3])
                 img = img[o_t:H_c-o_b, o_l:W_c-o_r]
                 img = cv2.resize(img, (W_c, H_c), interpolation=cv2.INTER_CUBIC)
+                '''
+                below is the final constructed image, given the
+                ldi and camera coords/angle
+                '''
+                cv2.imwrite('tmp/frame'+str(tp_id)+'.png', cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
 
             """
             img = cv2.resize(img, (int(img.shape[1] / init_factor), int(img.shape[0] / init_factor)), interpolation=cv2.INTER_CUBIC)
