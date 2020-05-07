@@ -114,14 +114,14 @@ class data_files:
         self.depth_file = self.clean(self.depth_file, self.depth_formats, self.depth_dir)
         self.ldi_file = []
         self.make_extra_files([[self.ldi_file, self.ldi_write, self.ldi_dir]])
-        self.im_file = self.collect_extra_files(self.im_dir)
+        self.im_file = self.collect_extra_files(self.im_dir, self.im_formats)
 
 
     def collect_ldi(self):
         self.ldi_file = os.listdir(self.ldi_dir)
         self.ldi_file = self.clean(self.ldi_file, self.ldi_formats, self.ldi_dir)
-        self.im_file = self.collect_extra_files(self.im_dir)
-        self.depth_file = self.collect_extra_files(self.depth_dir)
+        self.im_file = self.collect_extra_files(self.im_dir, self.im_formats)
+        self.depth_file = self.collect_extra_files(self.depth_dir, self.depth_formats)
 
 
     def clean(self, file_list, supported_formats, dir):
@@ -147,14 +147,19 @@ class data_files:
                 tmp_list.append(os.path.join(file_dir, base+file_format))
 
 
-    def collect_extra_files(self, dir):
+    def collect_extra_files(self, dir, supported_formats):
         '''
         WARNING: this quick and easy method assumes os.listdir returns
         in the exact same order for each dir
         '''
-        tmp_list = os.listdir(dir)
-        for file in tmp_list:
+        file_list = os.listdir(dir)
+        remove_list = []
+        for file in file_list:
             if file.split('.')[0] not in self.base_file:
-                tmp_list.remove(file)
-        tmp_list = [os.path.join(dir, file) for file in tmp_list]
-        return tmp_list
+                remove_list.append(file)
+            elif file.split('.')[-1] not in supported_formats:
+                remove_list.append(file)
+        for remove_file in remove_list:
+            file_list.remove(remove_file)
+        file_list = [os.path.join(dir, file) for file in file_list]
+        return file_list
