@@ -27,8 +27,10 @@ import utils_extra
 def run_samples(samples, config):
     clock = utils_extra.timer()
     print('Contructing Video...')
+    constructer = mesh.frame_constucter(config)
     for idx in range(samples.data_num):
-        config = utils_extra.vid_meta_CPY(config, samples.depth_file[idx])
+        output_h, output_w = utils_extra.vid_meta_CPY(config, samples.depth_file[idx])
+        original_h, original_w = output_h, output_w  # elim this eventually
         image = imageio.imread(samples.im_file[idx])
         depth = read_MiDaS_depth(samples.depth_file[idx], 3.0, config['output_h'], config['output_w'])
         mean_loc_depth = depth[depth.shape[0]//2, depth.shape[1]//2]
@@ -38,13 +40,13 @@ def run_samples(samples, config):
         verts, colors, faces, Height, Width, hFov, vFov = mesh.read_ply(samples.ldi_file[idx])
         if config['verbose']:
             print("Loaded LDI in: " + clock.run_time())
-        top = (config.get('original_h') // 2 - int_mtx[1, 2] * config['output_h'])
-        left = (config.get('original_w') // 2 - int_mtx[0, 2] * config['output_w'])
-        down, right = top + config['output_h'], left + config['output_w']
+        top = (original_h // 2 - int_mtx[1, 2] * output_h)
+        left = (original_w // 2 - int_mtx[0, 2] * output_w)
+        down, right = top + output_h, left + output_w
         border = [int(xx) for xx in [top, down, left, right]]
-        constructer = mesh.frame_constucter(copy.deepcopy(int_mtx),
-                                            config)
         constructer.get_frame(samples.ldi_file[idx],
+                              copy.deepcopy(int_mtx),
+                              output_h, output_w,
                               border=border,
                               depth=depth,
                               mean_loc_depth=mean_loc_depth)
