@@ -2290,6 +2290,9 @@ def output_3d_photo(verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, 
         atop = 0; abuttom = img.shape[0] - img.shape[0] % 2; aleft = 0; aright = img.shape[1] - img.shape[1] % 2
         crop_stereos = []
         for stereo in stereos:
+            print(stereo)
+            print(stereo.shape)
+            cv2.imwrite('tmp/stereo'+str(tp_id)+'.png', cv2.cvtColor(stereo, cv2.COLOR_RGB2BGR))
             crop_stereos.append((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8))
             stereos = crop_stereos
         clip = ImageSequenceClip(stereos, fps=config['fps'])
@@ -2300,3 +2303,17 @@ def output_3d_photo(verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, 
 
 
     return normal_canvas, all_canvas
+
+
+'''
+class adaptation for frame constructiong using
+base code from output_3d_photo funciton above
+'''
+class frame_constucter:
+    def __init__(self, video_type):
+        self.video_type = video_type
+
+    def get_frame(self, verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, video_traj_types, ref_pose,
+                        output_dir, ref_image, int_mtx, config, image, videos_poses, video_basename, original_H=None, original_W=None,
+                        border=None, depth=None, normal_canvas=None, all_canvas=None, mean_loc_depth=None):
+        print('NOT MADE')

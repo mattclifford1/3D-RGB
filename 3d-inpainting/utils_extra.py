@@ -129,12 +129,7 @@ class data_files:
         remove all non-supported file types and add the directory
         into the file list
         '''
-        remove_list = []
-        for file in file_list:
-            if file.split('.')[-1] not in supported_formats:
-                remove_list.append(file)
-        for remove_file in remove_list:
-            file_list.remove(remove_file)
+        file_list = self.remove_upsupported(file_list, supported_formats, type='format')
         self.base_file = [file.split('.')[0] for file in file_list]
         file_list = [os.path.join(dir, file) for file in file_list]
         self.data_num = len(file_list)
@@ -153,13 +148,21 @@ class data_files:
         in the exact same order for each dir
         '''
         file_list = os.listdir(dir)
+        file_list = self.remove_upsupported(file_list, supported_formats, type='format')
+        file_list = self.remove_upsupported(file_list, self.base_file, type='file')
+        file_list = [os.path.join(dir, file) for file in file_list]
+        return file_list
+
+
+    def remove_upsupported(self, file_list, supported_formats, type='format'):
+        if type == 'format':
+            type = -1
+        elif type == 'file':
+            type = 0
         remove_list = []
         for file in file_list:
-            if file.split('.')[0] not in self.base_file:
-                remove_list.append(file)
-            elif file.split('.')[-1] not in supported_formats:
+            if file.split('.')[type] not in supported_formats:
                 remove_list.append(file)
         for remove_file in remove_list:
             file_list.remove(remove_file)
-        file_list = [os.path.join(dir, file) for file in file_list]
         return file_list

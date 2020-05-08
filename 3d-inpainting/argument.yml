@@ -11,10 +11,10 @@ traj_types: ['double-straight-line', 'double-straight-line', 'circle', 'circle']
 video_postfix: ['dolly-zoom-in', 'zoom-in', 'circle', 'swing']
 specific: ''
 longer_side_len: 960
-src_folder: test-im/frames
-depth_folder: test-im/depth
-mesh_folder: test-im/ldi
-video_folder: test-im/video
+src_folder: nu-data/frames
+depth_folder: nu-data/depth
+mesh_folder: nu-data/ldi
+video_folder: nu-data/video
 load_ply: False
 save_ply: True
 inference_video: True
