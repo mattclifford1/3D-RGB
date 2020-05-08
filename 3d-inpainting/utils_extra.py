@@ -21,6 +21,9 @@ def int_mtx_CPY(image):
     return int_mtx
 
 def tgts_poses_CPY(config):
+    '''
+    get the pos for camera (i think) for all frames in a pose
+    '''
     tgts_poses = []
     generic_pose = np.eye(4)
     for traj_idx in range(len(config['traj_types'])):

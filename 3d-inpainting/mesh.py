@@ -24,6 +24,7 @@ from mesh_tools import refresh_bord_depth, enlarge_border, fill_dummy_bord, extr
 import transforms3d
 import random
 from functools import reduce
+import copy
 
 def create_mesh(depth, image, int_mtx, config):
     H, W, C = image.shape
@@ -2294,13 +2295,12 @@ def output_3d_photo(verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, 
             print(stereo.shape)
             cv2.imwrite('tmp/stereo'+str(tp_id)+'.png', cv2.cvtColor(stereo, cv2.COLOR_RGB2BGR))
             crop_stereos.append((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8))
+            cv2.imwrite('tmp/crop_stereo'+str(tp_id)+'.png', cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
             stereos = crop_stereos
         clip = ImageSequenceClip(stereos, fps=config['fps'])
         if isinstance(video_basename, list):
             video_basename = video_basename[0]
         clip.write_videofile(os.path.join(output_dir, video_basename + '_' + video_traj_type + '.mp4'), fps=config['fps'])
-
-
 
     return normal_canvas, all_canvas
 
@@ -2310,10 +2310,159 @@ class adaptation for frame constructiong using
 base code from output_3d_photo funciton above
 '''
 class frame_constucter:
-    def __init__(self, video_type):
-        self.video_type = video_type
+    def __init__(self, int_mtx, config):
+        self.ref_pose = np.eye(4)
+        self.int_mtx = int_mtx
+        self.config = config
+        self.video_traj_types = self.config['video_postfix']
+        self.original_H = config.get('original_h')
+        self.original_W = config.get('original_w')
+        self.make_tgts_poses()
 
-    def get_frame(self, verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, video_traj_types, ref_pose,
-                        output_dir, ref_image, int_mtx, config, image, videos_poses, video_basename, original_H=None, original_W=None,
-                        border=None, depth=None, normal_canvas=None, all_canvas=None, mean_loc_depth=None):
-        print('NOT MADE')
+    def make_tgts_poses(self):
+        '''
+        get the pos for camera (i think) for all frames in a pose
+        '''
+        self.video_poses = []
+        generic_pose = np.eye(4)   # copy from ref_pose???
+        for traj_idx in range(len(self.config['traj_types'])):
+            tgt_poses = []
+            sx, sy, sz = utils.path_planning(self.config['num_frames'], self.config['x_shift_range'][traj_idx], self.config['y_shift_range'][traj_idx],
+                                       self.config['z_shift_range'][traj_idx], path_type=self.config['traj_types'][traj_idx])
+            for xx, yy, zz in zip(sx, sy, sz):
+                tgt_poses.append(generic_pose * 1.)
+                tgt_poses[-1][:3, -1] = np.array([xx, yy, zz])
+            self.video_poses += [tgt_poses]
+
+    def load_ply(self, file_name):
+        '''
+        take from run scipt - not sure if copy needed or not yet
+        '''
+        print('Loading PLY')
+        ply = read_ply(file_name)
+        self.verts = ply[0].copy()
+        self.colors = ply[1].copy()
+        self.colors = self.colors[..., :3]
+        self.faces = ply[2].copy()
+        self.Height = copy.deepcopy(ply[3])
+        self.Width = copy.deepcopy(ply[4])
+        # self.hFov = copy.deepcopy(ply[5])
+        # self.vFov = copy.deepcopy(ply[6])
+
+    def get_frame(self, ply_file, border=None, depth=None, mean_loc_depth=None):
+        self.load_ply(ply_file)
+        print('Making graph')
+        cam_mesh = netx.Graph()
+
+        cam_mesh.graph['H'] = self.Height
+        cam_mesh.graph['W'] = self.Width
+        cam_mesh.graph['original_H'] = self.original_H
+        cam_mesh.graph['original_W'] = self.original_W
+        int_mtx_real_x = self.int_mtx[0] * self.Width
+        int_mtx_real_y = self.int_mtx[1] * self.Height
+        cam_mesh.graph['hFov'] = 2 * np.arctan((1. / 2.) * ((cam_mesh.graph['original_W']) / int_mtx_real_x[0]))
+        cam_mesh.graph['vFov'] = 2 * np.arctan((1. / 2.) * ((cam_mesh.graph['original_H']) / int_mtx_real_y[1]))
+
+        fov_in_rad = max(cam_mesh.graph['vFov'], cam_mesh.graph['hFov'])
+        fov = (fov_in_rad * 180 / np.pi)
+        print("fov: " + str(fov))
+        init_factor = 1
+        if self.config.get('anti_flickering') is True:
+            init_factor = 3
+        if (cam_mesh.graph['original_H'] is not None) and (cam_mesh.graph['original_W'] is not None):
+            canvas_w = cam_mesh.graph['original_W']
+            canvas_h = cam_mesh.graph['original_H']
+        else:
+            canvas_w = cam_mesh.graph['W']
+            canvas_h = cam_mesh.graph['H']
+        canvas_size = max(canvas_h, canvas_w)
+        normal_canvas = Canvas_view(fov,
+                                    self.verts,
+                                    self.faces,
+                                    self.colors,
+                                    canvas_size=canvas_size,
+                                    factor=init_factor,
+                                    bgcolor='gray',
+                                    proj='perspective')
+        img = normal_canvas.render()
+        backup_img, backup_all_img, all_img_wo_bound = img.copy(), img.copy() * 0, img.copy() * 0
+        img = cv2.resize(img, (int(img.shape[1] / init_factor), int(img.shape[0] / init_factor)), interpolation=cv2.INTER_AREA)
+        if border is None:
+            border = [0, img.shape[0], 0, img.shape[1]]
+        H, W = cam_mesh.graph['H'], cam_mesh.graph['W']
+        if (cam_mesh.graph['original_H'] is not None) and (cam_mesh.graph['original_W'] is not None):
+            aspect_ratio = cam_mesh.graph['original_H'] / cam_mesh.graph['original_W']
+        else:
+            aspect_ratio = cam_mesh.graph['H'] / cam_mesh.graph['W']
+        if aspect_ratio > 1:
+            img_h_len = cam_mesh.graph['H'] if cam_mesh.graph.get('original_H') is None else cam_mesh.graph['original_H']
+            img_w_len = img_h_len / aspect_ratio
+            anchor = [0,
+                      img.shape[0],
+                      int(max(0, int((img.shape[1])//2 - img_w_len//2))),
+                      int(min(int((img.shape[1])//2 + img_w_len//2), (img.shape[1])-1))]
+        elif aspect_ratio <= 1:
+            img_w_len = cam_mesh.graph['W'] if cam_mesh.graph.get('original_W') is None else cam_mesh.graph['original_W']
+            img_h_len = img_w_len * aspect_ratio
+            anchor = [int(max(0, int((img.shape[0])//2 - img_h_len//2))),
+                      int(min(int((img.shape[0])//2 + img_h_len//2), (img.shape[0])-1)),
+                      0,
+                      img.shape[1]]
+        anchor = np.array(anchor)
+        plane_width = np.tan(fov_in_rad/2.) * np.abs(mean_loc_depth)
+        print('Running for all poses')
+        for video_pose, video_traj_type in zip(self.videos_poses, self.video_traj_types):
+            stereos = []
+            # make frames
+            for tp_id, tp in enumerate(video_pose):
+                rel_pose = np.linalg.inv(np.dot(tp, np.linalg.inv(self.ref_pose)))
+                axis, angle = transforms3d.axangles.mat2axangle(rel_pose[0:3, 0:3])
+                normal_canvas.rotate(axis=axis, angle=(angle*180)/np.pi)
+                normal_canvas.translate(rel_pose[:3,3])
+                new_mean_loc_depth = mean_loc_depth - float(rel_pose[2, 3])
+                if 'dolly' in video_traj_type:
+                    new_fov = float((np.arctan2(plane_width, np.array([np.abs(new_mean_loc_depth)])) * 180. / np.pi) * 2)
+                    normal_canvas.reinit_camera(new_fov)
+                else:
+                    normal_canvas.reinit_camera(fov)
+                normal_canvas.view_changed()
+                img = normal_canvas.render()
+                img = cv2.GaussianBlur(img,(int(init_factor//2 * 2 + 1), int(init_factor//2 * 2 + 1)), 0)
+                img = cv2.resize(img, (int(img.shape[1] / init_factor), int(img.shape[0] / init_factor)), interpolation=cv2.INTER_AREA)
+                img = img[anchor[0]:anchor[1], anchor[2]:anchor[3]]
+                img = img[int(border[0]):int(border[1]), int(border[2]):int(border[3])]
+
+                if any(np.array(self.config['crop_border']) > 0.0):
+                    H_c, W_c, _ = img.shape
+                    o_t = int(H_c * self.config['crop_border'][0])
+                    o_l = int(W_c * self.config['crop_border'][1])
+                    o_b = int(H_c * self.config['crop_border'][2])
+                    o_r = int(W_c * self.config['crop_border'][3])
+                    img = img[o_t:H_c-o_b, o_l:W_c-o_r]
+                    img = cv2.resize(img, (W_c, H_c), interpolation=cv2.INTER_CUBIC)
+                    '''
+                    below is the final constructed image, given the
+                    ldi and camera coords/angle
+                    '''
+                    cv2.imwrite('tmp/frame'+str(tp_id)+'.png', cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
+
+                stereos.append(img[..., :3])
+                normal_canvas.translate(-rel_pose[:3,3])
+                normal_canvas.rotate(axis=axis, angle=-(angle*180)/np.pi)
+                normal_canvas.view_changed()
+            atop = 0; abuttom = img.shape[0] - img.shape[0] % 2; aleft = 0; aright = img.shape[1] - img.shape[1] % 2
+            crop_stereos = []
+            for stereo in stereos:
+                print(stereo)
+                print(stereo.shape)
+                cv2.imwrite('tmp/stereo'+str(tp_id)+'.png', cv2.cvtColor(stereo, cv2.COLOR_RGB2BGR))
+                crop_stereos.append((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8))
+                cv2.imwrite('tmp/crop_stereo'+str(tp_id)+'.png', cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
+                stereos = crop_stereos
+            '''
+            stereos is whole clip -- use for nice video construction??
+            '''
+            clip = ImageSequenceClip(stereos, fps=self.config['fps'])
+            # if isinstance(video_basename, list):
+            #     video_basename = video_basename[0]
+            # clip.write_videofile(os.path.join(output_dir, video_basename + '_' + video_traj_type + '.mp4'), fps=config['fps'])
