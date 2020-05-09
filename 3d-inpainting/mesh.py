@@ -2347,9 +2347,39 @@ class frame_constucter:
         self.Width = copy.deepcopy(ply[4])
         # self.hFov = copy.deepcopy(ply[5])
         # self.vFov = copy.deepcopy(ply[6])
+        self.extract_info()
+
+    def extract_info(self):
+        '''
+        TODO: save to self needed items
+        '''
+        self.cam_mesh_graph = {}
+        self.cam_mesh_graph['H'] = self.Height
+        self.cam_mesh_graph['W'] = self.Width
+        self.cam_mesh_graph['original_H'] = self.original_H
+        self.cam_mesh_graph['original_W'] = self.original_W
+        int_mtx_real_x = self.int_mtx[0] * self.Width
+        int_mtx_real_y = self.int_mtx[1] * self.Height
+        self.cam_mesh_graph['hFov'] = 2 * np.arctan((1. / 2.) * ((self.cam_mesh_graph['original_W']) / int_mtx_real_x[0]))
+        self.cam_mesh_graph['vFov'] = 2 * np.arctan((1. / 2.) * ((self.cam_mesh_graph['original_H']) / int_mtx_real_y[1]))
+
+        self.fov_in_rad = max(self.cam_mesh_graph['vFov'], self.cam_mesh_graph['hFov'])
+        self.fov = (self.fov_in_rad * 180 / np.pi)
+        print("fov: " + str(self.fov))
+        self.init_factor = 1
+        if self.config.get('anti_flickering') is True:
+            self.init_factor = 3
+        if (self.cam_mesh_graph['original_H'] is not None) and (self.cam_mesh_graph['original_W'] is not None):
+            canvas_w = self.cam_mesh_graph['original_W']
+            canvas_h = self.cam_mesh_graph['original_H']
+        else:
+            canvas_w = self.cam_mesh_graph['W']
+            canvas_h = self.cam_mesh_graph['H']
+        self.canvas_size = max(canvas_h, canvas_w)
 
     def gen_rgb(self, tp, video_traj_type, plane_width, fov, normal_canvas, anchor, border):
         print('generating')
+        '''separate out below camera moving bit of code'''
         rel_pose = np.linalg.inv(np.dot(tp, np.linalg.inv(self.ref_pose)))
         axis, angle = transforms3d.axangles.mat2axangle(rel_pose[0:3, 0:3])
         normal_canvas.rotate(axis=axis, angle=(angle*180)/np.pi)
@@ -2392,77 +2422,66 @@ class frame_constucter:
         self.im_count += 1
         return img
 
-
     def get_frame(self, ply_file, int_mtx, output_h, output_w, border=None, depth=None, mean_loc_depth=None):
         self.original_H, self.original_W = output_h, output_w
         self.int_mtx = int_mtx
         self.mean_loc_depth = mean_loc_depth
         self.load_ply(ply_file)
         print('Making graph')
-        cam_mesh = netx.Graph()
-        cam_mesh.graph['H'] = self.Height
-        cam_mesh.graph['W'] = self.Width
-        cam_mesh.graph['original_H'] = self.original_H
-        cam_mesh.graph['original_W'] = self.original_W
-        int_mtx_real_x = self.int_mtx[0] * self.Width
-        int_mtx_real_y = self.int_mtx[1] * self.Height
-        cam_mesh.graph['hFov'] = 2 * np.arctan((1. / 2.) * ((cam_mesh.graph['original_W']) / int_mtx_real_x[0]))
-        cam_mesh.graph['vFov'] = 2 * np.arctan((1. / 2.) * ((cam_mesh.graph['original_H']) / int_mtx_real_y[1]))
 
-        fov_in_rad = max(cam_mesh.graph['vFov'], cam_mesh.graph['hFov'])
-        fov = (fov_in_rad * 180 / np.pi)
-        print("fov: " + str(fov))
-        self.init_factor = 1
-        if self.config.get('anti_flickering') is True:
-            self.init_factor = 3
-        if (cam_mesh.graph['original_H'] is not None) and (cam_mesh.graph['original_W'] is not None):
-            canvas_w = cam_mesh.graph['original_W']
-            canvas_h = cam_mesh.graph['original_H']
-        else:
-            canvas_w = cam_mesh.graph['W']
-            canvas_h = cam_mesh.graph['H']
-        canvas_size = max(canvas_h, canvas_w)
-        normal_canvas = Canvas_view(fov,
+        normal_canvas = Canvas_view(self.fov,
                                     self.verts,
                                     self.faces,
                                     self.colors,
-                                    canvas_size=canvas_size,
+                                    canvas_size=self.canvas_size,
                                     factor=self.init_factor,
                                     bgcolor='gray',
                                     proj='perspective')
         img = normal_canvas.render()
-        backup_img, backup_all_img, all_img_wo_bound = img.copy(), img.copy() * 0, img.copy() * 0
         img = cv2.resize(img, (int(img.shape[1] / self.init_factor), int(img.shape[0] / self.init_factor)), interpolation=cv2.INTER_AREA)
+
+
+
+        '''separate below out into own method'''
         if border is None:
             border = [0, img.shape[0], 0, img.shape[1]]
-        H, W = cam_mesh.graph['H'], cam_mesh.graph['W']
-        if (cam_mesh.graph['original_H'] is not None) and (cam_mesh.graph['original_W'] is not None):
-            aspect_ratio = cam_mesh.graph['original_H'] / cam_mesh.graph['original_W']
+        if (self.cam_mesh_graph['original_H'] is not None) and (self.cam_mesh_graph['original_W'] is not None):
+            aspect_ratio = self.cam_mesh_graph['original_H'] / self.cam_mesh_graph['original_W']
         else:
-            aspect_ratio = cam_mesh.graph['H'] / cam_mesh.graph['W']
+            aspect_ratio = self.cam_mesh_graph['H'] / self.cam_mesh_graph['W']
         if aspect_ratio > 1:
-            img_h_len = cam_mesh.graph['H'] if cam_mesh.graph.get('original_H') is None else cam_mesh.graph['original_H']
+            img_h_len = self.cam_mesh_graph['H'] if self.cam_mesh_graph.get('original_H') is None else self.cam_mesh_graph['original_H']
             img_w_len = img_h_len / aspect_ratio
             anchor = [0,
                       img.shape[0],
                       int(max(0, int((img.shape[1])//2 - img_w_len//2))),
                       int(min(int((img.shape[1])//2 + img_w_len//2), (img.shape[1])-1))]
         elif aspect_ratio <= 1:
-            img_w_len = cam_mesh.graph['W'] if cam_mesh.graph.get('original_W') is None else cam_mesh.graph['original_W']
+            img_w_len = self.cam_mesh_graph['W'] if self.cam_mesh_graph.get('original_W') is None else self.cam_mesh_graph['original_W']
             img_h_len = img_w_len * aspect_ratio
             anchor = [int(max(0, int((img.shape[0])//2 - img_h_len//2))),
                       int(min(int((img.shape[0])//2 + img_h_len//2), (img.shape[0])-1)),
                       0,
                       img.shape[1]]
         anchor = np.array(anchor)
-        plane_width = np.tan(fov_in_rad/2.) * np.abs(self.mean_loc_depth)
+        plane_width = np.tan(self.fov_in_rad/2.) * np.abs(self.mean_loc_depth)
+        '''until here'''
+
+
+
         print('Running for all poses')
         for video_pose, video_traj_type in zip(self.videos_poses, self.video_traj_types):
             stereos = []
             # make frames
             for tp_id, tp in enumerate(video_pose):
                 print('start gen')
-                img_gen = self.gen_rgb(tp, video_traj_type, plane_width, fov, normal_canvas, anchor, border)
+                img_gen = self.gen_rgb(tp,
+                                       video_traj_type,
+                                       plane_width,
+                                       self.fov,
+                                       normal_canvas,
+                                       anchor,
+                                       border)
                 print('fin')
 
 
@@ -2484,8 +2503,6 @@ class frame_constucter:
             # # clip.write_videofile(os.path.join(output_dir, video_basename + '_' + video_traj_type + '.mp4'), fps=config['fps'])
 '''
 functions needed:
-
-load ldi   - done
-gen graph from ldi
-gen rgb from graph given camera pos
+    gen graph from ldi
+    gen rgb from graph given camera pos
 '''
