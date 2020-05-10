@@ -2169,6 +2169,7 @@ class Canvas_view():
 def output_3d_photo(verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, video_traj_types, ref_pose,
                     output_dir, ref_image, int_mtx, config, image, videos_poses, video_basename, original_H=None, original_W=None,
                     border=None, depth=None, normal_canvas=None, all_canvas=None, mean_loc_depth=None):
+    os.makedirs(output_dir, exist_ok=True)
     cam_mesh = netx.Graph()
     cam_mesh.graph['H'] = Height
     cam_mesh.graph['W'] = Width
@@ -2236,7 +2237,6 @@ def output_3d_photo(verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, 
         tops = []; buttoms = []; lefts = []; rights = []
         # make frames
         for tp_id, tp in enumerate(video_pose):
-            print(tp_id)
             rel_pose = np.linalg.inv(np.dot(tp, np.linalg.inv(ref_pose)))
             axis, angle = transforms3d.axangles.mat2axangle(rel_pose[0:3, 0:3])
             normal_canvas.rotate(axis=axis, angle=(angle*180)/np.pi)
@@ -2266,7 +2266,6 @@ def output_3d_photo(verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, 
                 below is the final constructed image, given the
                 ldi and camera coords/angle
                 '''
-                cv2.imwrite('tmp/frame'+str(tp_id)+'.png', cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
 
             """
             img = cv2.resize(img, (int(img.shape[1] / init_factor), int(img.shape[0] / init_factor)), interpolation=cv2.INTER_CUBIC)
@@ -2291,17 +2290,18 @@ def output_3d_photo(verts, colors, faces, Height, Width, hFov, vFov, tgt_poses, 
         """
         atop = 0; abuttom = img.shape[0] - img.shape[0] % 2; aleft = 0; aright = img.shape[1] - img.shape[1] % 2
         crop_stereos = []
-        for stereo in stereos:
-            print(stereo)
-            print(stereo.shape)
-            cv2.imwrite('tmp/stereo'+str(tp_id)+'.png', cv2.cvtColor(stereo, cv2.COLOR_RGB2BGR))
+        print('Writing to: '+output_dir)
+        for id, stereo in enumerate(stereos):
+            # make all the ims
+            print(id)
+            cv2.imwrite(os.path.join(output_dir, 'stereo'+str(id)+video_traj_type+'.jpg'), cv2.cvtColor(stereo, cv2.COLOR_RGB2BGR))
             crop_stereos.append((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8))
-            cv2.imwrite('tmp/crop_stereo'+str(tp_id)+'.png', cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
+            cv2.imwrite(os.path.join(output_dir, 'crop_stereo'+str(id)+video_traj_type+'.jpg'), cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
             stereos = crop_stereos
-        clip = ImageSequenceClip(stereos, fps=config['fps'])
-        if isinstance(video_basename, list):
-            video_basename = video_basename[0]
-        clip.write_videofile(os.path.join(output_dir, video_basename + '_' + video_traj_type + '.mp4'), fps=config['fps'])
+        # clip = ImageSequenceClip(stereos, fps=config['fps'])
+        # if isinstance(video_basename, list):
+        #     video_basename = video_basename[0]
+        # clip.write_videofile(os.path.join(output_dir, video_basename + '_' + video_traj_type + '.mp4'), fps=config['fps'])
 
     return normal_canvas, all_canvas
 

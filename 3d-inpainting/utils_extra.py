@@ -55,6 +55,13 @@ def vid_meta_CPY(config, depth_file):
     output_h, output_w = int(config['output_h'] * frac), int(config['output_w'] * frac)
     return output_h, output_w
 
+def vid_meta_CPY_legacy(config, depth_file):
+    config['output_h'], config['output_w'] = np.load(depth_file).shape[:2]
+    frac = config['longer_side_len'] / max(config['output_h'], config['output_w'])
+    config['output_h'], config['output_w'] = int(config['output_h'] * frac), int(config['output_w'] * frac)
+    config['original_h'], config['original_w'] = config['output_h'], config['output_w']
+    return config
+
 
 class timer:
     def __init__(self):
