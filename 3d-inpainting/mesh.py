@@ -2422,13 +2422,7 @@ class frame_constucter:
         self.im_count += 1
         return img
 
-    def get_frame(self, ply_file, int_mtx, output_h, output_w, border=None, depth=None, mean_loc_depth=None):
-        self.original_H, self.original_W = output_h, output_w
-        self.int_mtx = int_mtx
-        self.mean_loc_depth = mean_loc_depth
-        self.load_ply(ply_file)
-        print('Making graph')
-
+    def get_canvas(self, border):
         normal_canvas = Canvas_view(self.fov,
                                     self.verts,
                                     self.faces,
@@ -2439,10 +2433,6 @@ class frame_constucter:
                                     proj='perspective')
         img = normal_canvas.render()
         img = cv2.resize(img, (int(img.shape[1] / self.init_factor), int(img.shape[0] / self.init_factor)), interpolation=cv2.INTER_AREA)
-
-
-
-        '''separate below out into own method'''
         if border is None:
             border = [0, img.shape[0], 0, img.shape[1]]
         if (self.cam_mesh_graph['original_H'] is not None) and (self.cam_mesh_graph['original_W'] is not None):
@@ -2465,16 +2455,24 @@ class frame_constucter:
                       img.shape[1]]
         anchor = np.array(anchor)
         plane_width = np.tan(self.fov_in_rad/2.) * np.abs(self.mean_loc_depth)
-        '''until here'''
+        return normal_canvas, anchor, plane_width
 
-
+    def get_frame(self, ply_file, int_mtx, output_h, output_w, border=None, depth=None, mean_loc_depth=None):
+        self.original_H, self.original_W = output_h, output_w
+        self.int_mtx = int_mtx
+        self.mean_loc_depth = mean_loc_depth
+        self.load_ply(ply_file)
+        print('Making graph')
+        normal_canvas, anchor, plane_width = self.get_canvas(border)
 
         print('Running for all poses')
+        output_dir = self.config['video_folder']
+        os.makedirs(output_dir, exist_ok=True)
+        print('Writing to: '+output_dir)
         for video_pose, video_traj_type in zip(self.videos_poses, self.video_traj_types):
             stereos = []
             # make frames
-            for tp_id, tp in enumerate(video_pose):
-                print('start gen')
+            for id, tp in enumerate(video_pose):
                 img_gen = self.gen_rgb(tp,
                                        video_traj_type,
                                        plane_width,
@@ -2482,7 +2480,9 @@ class frame_constucter:
                                        normal_canvas,
                                        anchor,
                                        border)
-                print('fin')
+                print(id)
+                cv2.imwrite(os.path.join(output_dir, 'stereo'+str(id)+video_traj_type+'.jpg'), cv2.cvtColor(img_gen, cv2.COLOR_RGB2BGR))
+           # cv2.imwrite(os.path.join(output_dir, 'crop_stereo'+str(id)+video_traj_type+'.jpg'), cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
 
 
             # atop = 0; abuttom = img.shape[0] - img.shape[0] % 2; aleft = 0; aright = img.shape[1] - img.shape[1] % 2

@@ -29,6 +29,7 @@ def run_samples(samples, config):
     print('Contructing Video...')
     constructer = mesh.frame_constucter(config)
     for idx in range(samples.data_num):
+        print(samples.ldi_file[idx])
         output_h, output_w = utils_extra.vid_meta_CPY(config, samples.depth_file[idx])
         original_h, original_w = output_h, output_w  # elim this eventually
         image = imageio.imread(samples.im_file[idx])
@@ -60,7 +61,6 @@ if __name__ == '__main__':
     parser.add_argument('--config', type=str, default='argument.yml',help='Configure of post processing')
     args = parser.parse_args()
     config = yaml.load(open(args.config, 'r'))
-
     samples = utils_extra.data_files(config['src_folder'],
                                   config['depth_folder'],
                                   config['mesh_folder'])
