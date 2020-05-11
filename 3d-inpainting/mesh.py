@@ -26,6 +26,8 @@ import random
 from functools import reduce
 import copy
 import utils
+import utils_extra
+import imageio
 
 def create_mesh(depth, image, int_mtx, config):
     H, W, C = image.shape
@@ -2311,12 +2313,27 @@ class adaptation for frame constructiong using
 base code from output_3d_photo funciton above
 '''
 class frame_constucter:
-    def __init__(self, config):
+    def __init__(self, config, im_file, depth_file):
         self.ref_pose = np.eye(4)
         self.config = config
         self.video_traj_types = self.config['video_postfix']
         self.make_tgts_poses()
         self.im_count = 0
+        self.setup(im_file, depth_file)
+
+    def setup(self, im_file, depth_file):
+        '''
+        set border and output sizes etc
+        '''
+        image = imageio.imread(im_file)
+        self.int_mtx = utils_extra.int_mtx_CPY(image)
+        self.output_h, self.output_w = utils_extra.vid_meta_CPY(self.config, depth_file)
+        original_h, original_w = self.output_h, self.output_w  # elim this eventually
+        top = (original_h // 2 - self.int_mtx[1, 2] * self.output_h)
+        left = (original_w // 2 - self.int_mtx[0, 2] * self.output_w)
+        down, right = top + self.output_h, left + self.output_w
+        self.border = [int(xx) for xx in [top, down, left, right]]
+
 
     def make_tgts_poses(self):
         '''
@@ -2455,24 +2472,24 @@ class frame_constucter:
         plane_width = np.tan(self.fov_in_rad/2.) * np.abs(self.mean_loc_depth)
         return normal_canvas, anchor, plane_width
 
-    def get_frame(self, ply_file, num, int_mtx, output_h, output_w, border=None, depth=None, mean_loc_depth=None):
-        self.original_H, self.original_W = output_h, output_w
-        self.int_mtx = int_mtx
-        self.mean_loc_depth = mean_loc_depth
+    def get_frame(self, ply_file, num, depth_file):
+        self.original_H, self.original_W = self.output_h, self.output_w
+        depth = utils.read_MiDaS_depth(depth_file, 3.0, self.config['output_h'], self.config['output_w'])
+        self.mean_loc_depth = depth[depth.shape[0]//2, depth.shape[1]//2]
         self.load_ply(ply_file)
         print('Running for all poses')
         output_dir = self.config['video_folder']
         os.makedirs(output_dir, exist_ok=True)
         print('Writing to: '+output_dir)
         for video_pose, video_traj_type in zip(self.videos_poses, self.video_traj_types):
-            normal_canvas, anchor, plane_width = self.get_canvas(border)
+            normal_canvas, anchor, plane_width = self.get_canvas(self.border)
             img_gen = self.gen_rgb(video_pose[num],
                                    video_traj_type,
                                    plane_width,
                                    self.fov,
                                    normal_canvas,
                                    anchor,
-                                   border)
+                                   self.border)
             print(num)
             cv2.imwrite(os.path.join(output_dir, 'stereo'+str(num)+video_traj_type+'.jpg'), cv2.cvtColor(img_gen, cv2.COLOR_RGB2BGR))
            # cv2.imwrite(os.path.join(output_dir, 'crop_stereo'+str(num)+video_traj_type+'.jpg'), cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
@@ -2494,8 +2511,3 @@ class frame_constucter:
             # # if isinstance(video_basename, list):
             # #     video_basename = video_basename[0]
             # # clip.write_videofile(os.path.join(output_dir, video_basename + '_' + video_traj_type + '.mp4'), fps=config['fps'])
-'''
-functions needed:
-    gen graph from ldi
-    gen rgb from graph given camera pos
-'''
