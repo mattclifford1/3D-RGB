@@ -11,9 +11,9 @@ traj_types: ['circle']
 video_postfix: ['circle']
 specific: ''
 longer_side_len: 960
-src_folder: test-im/frames
-depth_folder: test-im/depth
-mesh_folder: test-im/ldi
+src_folder: test-im/frames-fake
+depth_folder: test-im/depth-fake
+mesh_folder: test-im/ldi-fake
 video_folder: test-im/video-ims
 load_ply: False
 save_ply: True

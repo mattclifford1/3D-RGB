@@ -140,6 +140,7 @@ class data_files:
         '''
         file_list = self.remove_upsupported(file_list, supported_formats, type='format')
         self.base_file = [file.split('.')[0] for file in file_list]
+        self.frame_num = [int(file) for file in self.base_file]
         file_list = [os.path.join(dir, file) for file in file_list]
         self.data_num = len(file_list)
         return file_list

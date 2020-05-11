@@ -46,6 +46,7 @@ def run_samples(samples, config):
         down, right = top + output_h, left + output_w
         border = [int(xx) for xx in [top, down, left, right]]
         constructer.get_frame(samples.ldi_file[idx],
+                              samples.frame_num[idx],
                               copy.deepcopy(int_mtx),
                               output_h, output_w,
                               border=border,

@@ -2378,8 +2378,6 @@ class frame_constucter:
         self.canvas_size = max(canvas_h, canvas_w)
 
     def gen_rgb(self, tp, video_traj_type, plane_width, fov, normal_canvas, anchor, border):
-        print('generating')
-        '''separate out below camera moving bit of code'''
         rel_pose = np.linalg.inv(np.dot(tp, np.linalg.inv(self.ref_pose)))
         axis, angle = transforms3d.axangles.mat2axangle(rel_pose[0:3, 0:3])
         normal_canvas.rotate(axis=axis, angle=(angle*180)/np.pi)
@@ -2457,32 +2455,27 @@ class frame_constucter:
         plane_width = np.tan(self.fov_in_rad/2.) * np.abs(self.mean_loc_depth)
         return normal_canvas, anchor, plane_width
 
-    def get_frame(self, ply_file, int_mtx, output_h, output_w, border=None, depth=None, mean_loc_depth=None):
+    def get_frame(self, ply_file, num, int_mtx, output_h, output_w, border=None, depth=None, mean_loc_depth=None):
         self.original_H, self.original_W = output_h, output_w
         self.int_mtx = int_mtx
         self.mean_loc_depth = mean_loc_depth
         self.load_ply(ply_file)
-        print('Making graph')
-        normal_canvas, anchor, plane_width = self.get_canvas(border)
-
         print('Running for all poses')
         output_dir = self.config['video_folder']
         os.makedirs(output_dir, exist_ok=True)
         print('Writing to: '+output_dir)
         for video_pose, video_traj_type in zip(self.videos_poses, self.video_traj_types):
-            stereos = []
-            # make frames
-            for id, tp in enumerate(video_pose):
-                img_gen = self.gen_rgb(tp,
-                                       video_traj_type,
-                                       plane_width,
-                                       self.fov,
-                                       normal_canvas,
-                                       anchor,
-                                       border)
-                print(id)
-                cv2.imwrite(os.path.join(output_dir, 'stereo'+str(id)+video_traj_type+'.jpg'), cv2.cvtColor(img_gen, cv2.COLOR_RGB2BGR))
-           # cv2.imwrite(os.path.join(output_dir, 'crop_stereo'+str(id)+video_traj_type+'.jpg'), cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
+            normal_canvas, anchor, plane_width = self.get_canvas(border)
+            img_gen = self.gen_rgb(video_pose[num],
+                                   video_traj_type,
+                                   plane_width,
+                                   self.fov,
+                                   normal_canvas,
+                                   anchor,
+                                   border)
+            print(num)
+            cv2.imwrite(os.path.join(output_dir, 'stereo'+str(num)+video_traj_type+'.jpg'), cv2.cvtColor(img_gen, cv2.COLOR_RGB2BGR))
+           # cv2.imwrite(os.path.join(output_dir, 'crop_stereo'+str(num)+video_traj_type+'.jpg'), cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
 
 
             # atop = 0; abuttom = img.shape[0] - img.shape[0] % 2; aleft = 0; aright = img.shape[1] - img.shape[1] % 2
