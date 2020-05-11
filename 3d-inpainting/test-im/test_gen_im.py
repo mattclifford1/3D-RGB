@@ -12,7 +12,7 @@ def compare_images(control_dir, test_dir):
         if (control_im == test_im).all():
             print('++++++++ '+test_file+' PASS ++++++++')
         else:
-            print('-------- '+test_file+' FAIL --------')
+            # print('-------- '+test_file+' FAIL --------')
             fail_count += 1
     print(str(fail_count)+' fail cases')
 

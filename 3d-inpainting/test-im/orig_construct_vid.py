@@ -9,6 +9,7 @@ from tqdm import tqdm
 import yaml
 import time
 import sys
+sys.path.append('..')
 from mesh import write_ply, read_ply, output_3d_photo
 from utils import get_MiDaS_samples, read_MiDaS_depth
 import torch
@@ -21,7 +22,6 @@ from MiDaS.run import run_depth
 from MiDaS.monodepth_net import MonoDepthNet
 import MiDaS.MiDaS_utils as MiDaS_utils
 from bilateral_filtering import sparse_bilateral_filtering
-
 import utils_extra
 
 def run_samples(samples, config):

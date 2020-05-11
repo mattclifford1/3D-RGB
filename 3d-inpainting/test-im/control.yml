@@ -11,10 +11,10 @@ traj_types: ['circle']
 video_postfix: ['circle']
 specific: ''
 longer_side_len: 960
-src_folder: test-im/frames
-depth_folder: test-im/depth
-mesh_folder: test-im/ldi
-video_folder: test-im/control-ims
+src_folder: frames
+depth_folder: depth
+mesh_folder: ldi
+video_folder: control-ims
 load_ply: False
 save_ply: True
 inference_video: True
