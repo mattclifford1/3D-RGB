@@ -6,9 +6,11 @@ import utils
 def set_device(config):
     if isinstance(config["gpu_ids"], int) and (config["gpu_ids"] >= 0):
         device = config["gpu_ids"]
+        dev = 'GPU'
     else:
         device = "cpu"
-    print("Running on Device: " + device)
+        dev = "CPU"
+    print("Running on Device: " + dev)
     return device
 
 
