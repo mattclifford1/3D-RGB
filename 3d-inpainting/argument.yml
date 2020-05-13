@@ -12,13 +12,13 @@ video_postfix: ['dolly-zoom-in', 'zoom-in', 'circle', 'swing']
 specific: ''
 longer_side_len: 960
 src_folder: nu-data/frames
-depth_folder: nu-data/depth
-mesh_folder: nu-data/ldi
-video_folder: nu-data/video
+depth_folder: first-run/depth
+mesh_folder: first-run/ldi
+video_folder: first-run/video
 load_ply: False
 save_ply: True
 inference_video: True
-gpu_ids: none
+gpu_ids: 0
 offscreen_rendering: False
 img_format: '.jpg'
 depth_threshold: 0.04

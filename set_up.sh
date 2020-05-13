@@ -4,8 +4,8 @@
 echo "============ Setting up Python ============"
 python3.7 -m venv ~/.3D_env         # make
 source ~/.3D_env/bin/activate     # activate
-pip --user install --upgrade pip
-pip --user install -r requirements.txt  # install python dependancies
+pip install --upgrade pip
+pip install -r requirements.txt  # install python dependancies
 
 echo "============ Download Models ============"
 chmod +x download.sh              # allow execution
