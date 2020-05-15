@@ -150,8 +150,14 @@ class data_files:
 
     def make_extra_files(self, list_data):
         for tmp_list, file_format, file_dir in list_data:
+            already_run = os.listdir(file_dir)
+            already_run = [os.path.join(file_dir, file) for file in already_run]
             for base in self.base_file:
-                tmp_list.append(os.path.join(file_dir, base+file_format))
+                to_be_computed_file = os.path.join(file_dir, base+file_format)
+                if to_be_computed_file in already_run:
+                    print('Already compututed: '+to_be_computed_file)
+                else:
+                    tmp_list.append(to_be_computed_file)
 
 
     def collect_extra_files(self, dir, supported_formats):
