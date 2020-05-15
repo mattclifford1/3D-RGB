@@ -22,7 +22,6 @@ def run_samples(samples, config):
                           device=device)
         # save results
         np.save(samples.depth_file[idx], depth)
-        print(samples.depth_file[idx])
         depth = (depth+np.min(depth))/np.max(depth)
         depth = depth*255
         cv2.imwrite(samples.depth_file[idx].split('.')[0]+'.png', depth)
