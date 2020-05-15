@@ -112,7 +112,7 @@ class data_files:
 
 
     def collect_rgb(self):
-        self.im_file = os.listdir(self.im_dir)
+        self.im_file = self.remove_computed(self.im_dir, self.depth_dir)
         self.im_file = self.clean(self.im_file, self.im_formats, self.im_dir)
         self.depth_file = []
         self.ldi_file = []
@@ -121,7 +121,7 @@ class data_files:
 
 
     def collect_depth(self):
-        self.depth_file = os.listdir(self.depth_dir)
+        self.depth_file = self.remove_computed(self.depth_dir, self.ldi_dir)
         self.depth_file = self.clean(self.depth_file, self.depth_formats, self.depth_dir)
         self.ldi_file = []
         self.make_extra_files([[self.ldi_file, self.ldi_write, self.ldi_dir]])
@@ -170,6 +170,19 @@ class data_files:
         file_list = self.remove_upsupported(file_list, self.base_file, type='file')
         file_list = [os.path.join(dir, file) for file in file_list]
         return file_list
+
+
+    def remove_computed(self, data_dir, already_run_dir):
+        data_list = os.listdir(data_dir)
+        already_run = os.listdir(already_run_dir)
+        base_already_run = [file.split('.')[0] for file in already_run]
+        remove_list = []
+        for file in data_list:
+            if file.split('.')[0] in base_already_run:
+                remove_list.append(file)
+        for remove_file in remove_list:
+            data_list.remove(remove_file)
+        return data_list
 
 
     def remove_upsupported(self, file_list, supported_formats, type='format'):

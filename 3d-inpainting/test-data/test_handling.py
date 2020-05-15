@@ -23,8 +23,16 @@ def compare_not_run(samples):
         print('++++++++++ PASS +++++++++++')
 
 
-
-
+def test_removed_input(samples):
+    fail_count = 0
+    already_run = os.listdir(samples.ldi_dir)
+    depth_base = [(file.split('.')[0]).split('/')[-1] for file in samples.depth_file]
+    for file in already_run:
+        if file.split('.')[0] in depth_base:
+            fail_count += 1
+            print('--------- Fail: '+file+ '-----------')
+    if fail_count == 0:
+        print('++++++++++ PASS +++++++++++')
 
 
 if __name__ == '__main__':
@@ -38,3 +46,6 @@ if __name__ == '__main__':
     samples.collect_depth()
 
     compare_not_run(samples)
+    test_removed_input(samples)
+    print(samples.depth_file)
+    print(samples.ldi_file)
