@@ -31,4 +31,4 @@ CONFIG="configs/bc4.yml"
 # VID="Sharks01"
 # sbatch -t $time -J $job_name$VID -o $dir$VID'.out' -e $dir$lr'.err' --mem=$ram ./bc4/submit_job.sh ./RUN/ldi.sh $CONFIG $VID
 VID="Sharks02"
-sbatch -t $time -J $job_name$VID -o $dir$VID'.out' -e $dir$lr'.err' --mem=$ram ./bc4/submit_job.sh ./RUN/ldi.sh $CONFIG $VID
+sbatch -t $time -J $job_name$VID -o $dir$VID'.out' -e $dir$lr'.err' --mem=$ram sh bc4/submit_job.sh ./RUN/ldi.sh $CONFIG $VID
