@@ -2432,8 +2432,8 @@ class frame_constucter:
             stereo = img[..., :3]
             atop = 0; abuttom = img.shape[0] - img.shape[0] % 2; aleft = 0; aright = img.shape[1] - img.shape[1] % 2
             cropped = (stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8)
-        print('saving frame')
-        cv2.imwrite('tmp/frame'+str(self.im_count)+'.png', cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
+        # print('saving frame')
+        # cv2.imwrite('tmp/frame'+str(self.im_count)+'.png', cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
         self.im_count += 1
         return img
 
@@ -2478,7 +2478,7 @@ class frame_constucter:
         self.mean_loc_depth = depth[depth.shape[0]//2, depth.shape[1]//2]
         self.load_ply(ply_file)
         # print('Running for all poses')
-        output_dir = self.config['video_folder']
+        output_dir = os.path.join(self.config['tgt_dir'], 'video-frames')
         os.makedirs(output_dir, exist_ok=True)
         print('Writing to: '+output_dir)
         for video_pose, video_traj_type in zip(self.videos_poses, self.video_traj_types):
@@ -2490,7 +2490,8 @@ class frame_constucter:
                                    normal_canvas,
                                    anchor,
                                    self.border)
-            cv2.imwrite(os.path.join(output_dir, 'stereo'+str(num)+video_traj_type+'.jpg'), cv2.cvtColor(img_gen, cv2.COLOR_RGB2BGR))
+            write_file = os.path.join(output_dir,str(num)+'-'+video_traj_type+'.jpg')
+            cv2.imwrite(write_file, cv2.cvtColor(img_gen, cv2.COLOR_RGB2BGR))
            # cv2.imwrite(os.path.join(output_dir, 'crop_stereo'+str(num)+video_traj_type+'.jpg'), cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
 
 

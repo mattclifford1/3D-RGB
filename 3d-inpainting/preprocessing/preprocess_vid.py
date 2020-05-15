@@ -4,6 +4,7 @@ import cv2
 import multiprocessing
 import argparse
 import yaml
+from tqdm import tqdm
 
 
 def resize_im_to(np_array, size):
@@ -35,12 +36,11 @@ class simple_writer():
             im_format = '.' + im_format
         self.im_format = im_format
         self.new_dir = filename.split('.')[0]
-        if not os.path.isdir(os.path.join(self.save_dir, self.new_dir)):
-            os.mkdir(os.path.join(self.save_dir, self.new_dir))
+        os.makedirs(os.path.join(self.save_dir, self.new_dir), exist_ok=True)
         # pool = multiprocessing.Pool(processes=40)
         # pool.map(self.save_single, range(len(im_list)))
         # pool.close()
-        for i in range(len(im_list)):
+        for i in tqdm(range(len(im_list))):
             self.save_single(i)
 
 
@@ -55,20 +55,13 @@ if __name__ == '__main__':
     parser.add_argument('--config', type=str, default='preprocess_vid.yml',help='Configure of video preprocessing')
     args = parser.parse_args()
     config = yaml.load(open(args.config, 'r'))
-
-    if not os.path.isdir(config['save_dir']):
-        os.mkdir(config['save_dir'])
-    else:
-        print('Already some frames processed')
-    alread_processed = os.listdir(config['save_dir'])
-    # changed to just to one vid at a time for now
-    # vid_list = os.listdir(config['input_dir'])
-    vid_list = [config['video_file']]
-    for vid in vid_list:
-        if vid.split('.')[0] in alread_processed:
-            print('Skipping '+vid)
-            continue
-        print('read')
-        im_list = get_list_of_ims(config['input_dir'], vid)
-        print('write')
-        simple_writer(im_list, config['save_dir'], vid)
+    os.makedirs(config['save_dir'], exist_ok=True)
+    os.makedirs(config['completed_dir'], exist_ok=True)
+    vid_list = os.listdir(config['input_dir'])
+    for id in tqdm(range(len(vid_list))):
+        base_file = vid_list[id].split('.')[0]
+        im_list = get_list_of_ims(config['input_dir'], vid_list[id])
+        simple_writer(im_list, config['save_dir'], vid_list[id])
+        old_dest = os.path.join(config['input_dir'], vid_list[id])
+        new_dest = os.path.join(config['completed_dir'], vid_list[id])
+        os.rename(old_dest, new_dest)

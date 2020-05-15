@@ -11,7 +11,7 @@ import cv2
 import imageio
 
 
-def run_depth(img_name, input_path, output_path, model_path, Net, utils, target_w=None, device='cpu'):
+def run_depth(img_name, model_path, Net, utils, target_w=None, device='cpu'):
     """Run MonoDepthNN to compute depth maps.
 
     Args:

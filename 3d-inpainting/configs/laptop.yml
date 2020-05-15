@@ -11,14 +11,12 @@ traj_types: ['double-straight-line', 'double-straight-line', 'circle', 'circle']
 video_postfix: ['dolly-zoom-in', 'zoom-in', 'circle', 'swing']
 specific: ''
 longer_side_len: 960
-src_folder: nu-data/frames
-depth_folder: first-run/depth
-mesh_folder: /mnt/storage/scratch/lw15979/first-run/ldi
-video_folder: first-run/video
+src_dir: nu-data/frames
+tgt_dir: nu-est
 load_ply: False
 save_ply: True
 inference_video: True
-gpu_ids: 0
+gpu_ids: None
 offscreen_rendering: False
 img_format: '.jpg'
 depth_threshold: 0.04

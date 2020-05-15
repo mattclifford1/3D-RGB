@@ -40,10 +40,11 @@ def run_samples(samples, config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, default='argument.yml',help='Configure of post processing')
+    parser.add_argument('--vid', type=str, help='Specific video to process')
     args = parser.parse_args()
     config = yaml.load(open(args.config, 'r'))
-    samples = utils_extra.data_files(config['src_folder'],
-                                  config['depth_folder'],
-                                  config['mesh_folder'])
+    samples = utils_extra.data_files(config['src_dir'],
+                                     config['tgt_dir'],
+                                     args.vid)
     samples.collect_ldi()
     run_samples(samples, config)

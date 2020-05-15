@@ -94,20 +94,22 @@ class data_files:
     for giving directory names and collecting all the relevent files
     from each to read/ write data
     '''
-    def __init__(self, im_dir, depth_dir, ldi_dir):
-        self.im_dir = im_dir
-        self.depth_dir = depth_dir
-        self.ldi_dir = ldi_dir
+    def __init__(self, src_dir, tgt_dir, vid):
+        self.im_dir = os.path.join(src_dir, vid)
+        self.depth_dir = os.path.join(tgt_dir, vid, 'depth')
+        self.ldi_dir = os.path.join(tgt_dir, vid, 'ldi')
+        self.video_dir = os.path.join(tgt_dir, vid, 'video-frames')
         self.im_formats=['jpg', 'png', 'jpeg']
         self.depth_formats=['npy']
         self.ldi_formats=['ply']
-        self.make_dirs(im_dir, depth_dir, ldi_dir)
+        self.make_dirs(self.im_dir, self.depth_dir, self.ldi_dir, self.video_dir)
         self.depth_write = '.npy'
         self.ldi_write = '.ply'
 
 
     def make_dirs(self, *args):
         for dir in args:
+            print(dir)
             os.makedirs(dir, exist_ok=True)
 
 
@@ -130,6 +132,7 @@ class data_files:
 
     def collect_ldi(self):
         self.ldi_file = os.listdir(self.ldi_dir)
+        self.ldi_file = self.remove_computed(self.ldi_dir, self.video_dir)
         self.ldi_file = self.clean(self.ldi_file, self.ldi_formats, self.ldi_dir)
         self.im_file = self.collect_extra_files(self.im_dir, self.im_formats)
         self.depth_file = self.collect_extra_files(self.depth_dir, self.depth_formats)

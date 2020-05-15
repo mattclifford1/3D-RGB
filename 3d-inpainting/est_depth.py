@@ -15,8 +15,6 @@ def run_samples(samples, config):
     print('Estimating Frames...')
     for idx in tqdm(range(samples.data_num)):
         depth = run_depth(samples.im_file[idx],
-                          config['src_folder'],
-                          config['depth_folder'],
                           config['MiDaS_model_ckpt'],
                           MonoDepthNet,
                           MiDaS_utils,
@@ -24,6 +22,7 @@ def run_samples(samples, config):
                           device=device)
         # save results
         np.save(samples.depth_file[idx], depth)
+        print(samples.depth_file[idx])
         depth = (depth+np.min(depth))/np.max(depth)
         depth = depth*255
         cv2.imwrite(samples.depth_file[idx].split('.')[0]+'.png', depth)
@@ -35,11 +34,12 @@ def run_samples(samples, config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, default='argument.yml',help='Configure of post processing')
+    parser.add_argument('--vid', type=str, help='Specific video to process')
     args = parser.parse_args()
     config = yaml.load(open(args.config, 'r'))
 
-    samples = utils_extra.data_files(config['src_folder'],
-                                  config['depth_folder'],
-                                  config['mesh_folder'])
+    samples = utils_extra.data_files(config['src_dir'],
+                                     config['tgt_dir'],
+                                     args.vid)
     samples.collect_rgb()
     run_samples(samples, config)
