@@ -1,5 +1,3 @@
-# Keep all the comments below as they aren't comments
-# all commands directly after a hash are read by slurm
 #!/bin/bash
 #SBATCH -p gpu # Partition to submit to
 #SBATCH --gres=gpu:1
