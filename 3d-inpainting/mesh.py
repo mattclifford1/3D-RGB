@@ -2490,7 +2490,6 @@ class frame_constucter:
                                    normal_canvas,
                                    anchor,
                                    self.border)
-            print(num)
             cv2.imwrite(os.path.join(output_dir, 'stereo'+str(num)+video_traj_type+'.jpg'), cv2.cvtColor(img_gen, cv2.COLOR_RGB2BGR))
            # cv2.imwrite(os.path.join(output_dir, 'crop_stereo'+str(num)+video_traj_type+'.jpg'), cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
 

@@ -27,7 +27,7 @@ def run_samples(samples, config):
     clock = utils_extra.timer()
     print('Contructing Video...')
     constructer = mesh.frame_constucter(config, samples.im_file[0], samples.depth_file[0])
-    for idx in range(samples.data_num):
+    for idx in tqdm(range(samples.data_num)):
         print(samples.ldi_file[idx])
         constructer.get_frame(samples.ldi_file[idx],
                               samples.frame_num[idx],
