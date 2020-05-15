@@ -13,7 +13,7 @@ specific: ''
 longer_side_len: 960
 src_folder: nu-data/frames
 depth_folder: first-run/depth
-mesh_folder: first-run/ldi
+mesh_folder: first-run/ldi-cache
 video_folder: first-run/video
 load_ply: False
 save_ply: True
