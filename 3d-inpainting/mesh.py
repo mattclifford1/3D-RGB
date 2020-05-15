@@ -2477,7 +2477,7 @@ class frame_constucter:
         depth = utils.read_MiDaS_depth(depth_file, 3.0, self.config['output_h'], self.config['output_w'])
         self.mean_loc_depth = depth[depth.shape[0]//2, depth.shape[1]//2]
         self.load_ply(ply_file)
-        print('Running for all poses')
+        # print('Running for all poses')
         output_dir = self.config['video_folder']
         os.makedirs(output_dir, exist_ok=True)
         print('Writing to: '+output_dir)
