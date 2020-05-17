@@ -13,7 +13,8 @@ def run_samples(samples, config):
     clock = utils_extra.timer()
     device  = utils_extra.set_device(config)
     print('Estimating Frames...')
-    for idx in tqdm(range(samples.data_num)):
+    for id in tqdm(range(samples.data_num)):
+        idx = samples.frame_num[id]
         depth = run_depth(samples.im_file[idx],
                           config['MiDaS_model_ckpt'],
                           MonoDepthNet,

@@ -57,7 +57,8 @@ def run_samples(samples, config):
     clock = utils_extra.timer()
     rgb_model, depth_edge_model, depth_feat_model = load_models(config)
     print('Estimating Frames...')
-    for idx in tqdm(range(samples.data_num)):
+    for id in tqdm(range(samples.data_num)):
+        idx = samples.frame_num[id]
         image = imageio.imread(samples.im_file[idx])
         int_mtx = utils_extra.int_mtx_CPY(image)
         config['output_h'], config['output_w'] = np.load(samples.depth_file[idx]).shape[:2]
