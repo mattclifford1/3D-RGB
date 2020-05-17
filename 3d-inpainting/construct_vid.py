@@ -31,8 +31,8 @@ def run_samples(samples, config):
     constructer = mesh.frame_constucter(config, samples.im_file[0], samples.depth_file[0], len(samples.frame_num))
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]
-        print(samples.ldi_file[idx])
         print(samples.frame_num[idx])
+        print(samples.ldi_file[idx])
         print(samples.depth_file[idx])
         frames_dict = constructer.get_frame(samples.ldi_file[idx],
                                             samples.frame_num[idx],

@@ -148,8 +148,8 @@ class data_files:
         self.data_num = len(file_list)
         file_dict = {}
         for file in file_list:
-            print(file)
             file_dict[int(file.split('.')[0])] = os.path.join(dir, file)
+        print(file_dict)
         return file_dict
 
 
