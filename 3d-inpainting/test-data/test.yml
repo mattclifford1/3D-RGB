@@ -11,10 +11,8 @@ traj_types: ['circle']
 video_postfix: ['circle']
 specific: ''
 longer_side_len: 960
-src_folder: data/frames
-depth_folder: data/depth
-mesh_folder: data/ldi
-video_folder: data/video
+src_dir: data/frames
+tgt_dir: data/tmp
 load_ply: False
 save_ply: True
 inference_video: True

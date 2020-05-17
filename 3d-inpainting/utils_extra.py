@@ -131,7 +131,6 @@ class data_files:
 
 
     def collect_ldi(self):
-        self.ldi_file = os.listdir(self.ldi_dir)
         self.ldi_file = self.remove_computed(self.ldi_dir, self.video_dir)
         self.ldi_file = self.clean(self.ldi_file, self.ldi_formats, self.ldi_dir)
         self.im_file = self.collect_extra_files(self.im_dir, self.im_formats)
@@ -146,9 +145,12 @@ class data_files:
         file_list = self.remove_upsupported(file_list, supported_formats, type='format')
         self.base_file = [file.split('.')[0] for file in file_list]
         self.frame_num = [int(file) for file in self.base_file]
-        file_list = [os.path.join(dir, file) for file in file_list]
         self.data_num = len(file_list)
-        return file_list
+        file_dict = {}
+        for file in file_list:
+            print(file)
+            file_dict[int(file.split('.')[0])] = os.path.join(dir, file)
+        return file_dict
 
 
     def make_extra_files(self, list_data):
@@ -171,8 +173,10 @@ class data_files:
         file_list = os.listdir(dir)
         file_list = self.remove_upsupported(file_list, supported_formats, type='format')
         file_list = self.remove_upsupported(file_list, self.base_file, type='file')
-        file_list = [os.path.join(dir, file) for file in file_list]
-        return file_list
+        file_dict = {}
+        for file in file_list:
+            file_dict[int(file.split('.')[0])] = os.path.join(dir, file)
+        return file_dict
 
 
     def remove_computed(self, data_dir, already_run_dir):
