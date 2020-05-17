@@ -24,7 +24,7 @@ def run_samples(samples, config):
         np.save(samples.depth_file[idx], depth)
         depth = (depth+np.min(depth))/np.max(depth)
         depth = depth*255
-        cv2.imwrite(samples.depth_file[idx].split('.')[0]+'.png', depth)
+        # cv2.imwrite(samples.depth_file[idx].split('.')[0]+'.png', depth)
         if config['verbose']:
             print("Depth estimated in: " + clock.run_time())
     print("Estimated frames in: " + clock.total_time())
