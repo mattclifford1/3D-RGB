@@ -4,6 +4,7 @@ import glob
 import os
 from functools import partial
 import vispy
+vispy.use('osmesa')
 import scipy.misc as misc
 from tqdm import tqdm
 import yaml
