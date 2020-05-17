@@ -2313,9 +2313,10 @@ class adaptation for frame constructiong using
 base code from output_3d_photo funciton above
 '''
 class frame_constucter:
-    def __init__(self, config, im_file, depth_file):
+    def __init__(self, config, im_file, depth_file, num_frames):
         self.ref_pose = np.eye(4)
         self.config = config
+        self.num_frames = num_frames
         self.video_traj_types = self.config['video_postfix']
         self.make_tgts_poses()
         self.im_count = 0
@@ -2343,7 +2344,7 @@ class frame_constucter:
         generic_pose = np.eye(4)   #copy from ref_pose???
         for traj_idx in range(len(self.config['traj_types'])):
             tgt_poses = []
-            sx, sy, sz = utils.path_planning(self.config['num_frames'], self.config['x_shift_range'][traj_idx], self.config['y_shift_range'][traj_idx],
+            sx, sy, sz = utils.path_planning(self.num_frames, self.config['x_shift_range'][traj_idx], self.config['y_shift_range'][traj_idx],
                                        self.config['z_shift_range'][traj_idx], path_type=self.config['traj_types'][traj_idx])
             for xx, yy, zz in zip(sx, sy, sz):
                 tgt_poses.append(generic_pose * 1.)
@@ -2481,6 +2482,7 @@ class frame_constucter:
         output_dir = os.path.join(self.config['tgt_dir'], 'video-frames')
         os.makedirs(output_dir, exist_ok=True)
         print('Writing to: '+output_dir)
+        frames_dict = {}
         for video_pose, video_traj_type in zip(self.videos_poses, self.video_traj_types):
             normal_canvas, anchor, plane_width = self.get_canvas(self.border)
             img_gen = self.gen_rgb(video_pose[num],
@@ -2490,9 +2492,11 @@ class frame_constucter:
                                    normal_canvas,
                                    anchor,
                                    self.border)
+            frames_dict[video_traj_type] = img_gen
             write_file = os.path.join(output_dir,str(num)+'-'+video_traj_type+'.jpg')
             cv2.imwrite(write_file, cv2.cvtColor(img_gen, cv2.COLOR_RGB2BGR))
            # cv2.imwrite(os.path.join(output_dir, 'crop_stereo'+str(num)+video_traj_type+'.jpg'), cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
+        return frames_dict
 
 
             # atop = 0; abuttom = img.shape[0] - img.shape[0] % 2; aleft = 0; aright = img.shape[1] - img.shape[1] % 2

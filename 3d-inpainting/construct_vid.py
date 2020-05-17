@@ -4,7 +4,6 @@ import glob
 import os
 from functools import partial
 import vispy
-vispy.use('osmesa')
 import scipy.misc as misc
 from tqdm import tqdm
 import yaml
@@ -26,15 +25,24 @@ import utils_extra
 
 def run_samples(samples, config):
     clock = utils_extra.timer()
+    for track_type in config['video_postfix']:
+        os.makedirs(os.path.join(samples.video_dir, track_type), exist_ok=True)
     print('Contructing Video...')
-    constructer = mesh.frame_constucter(config, samples.im_file[0], samples.depth_file[0])
+    constructer = mesh.frame_constucter(config, samples.im_file[0], samples.depth_file[0], len(samples.frame_num))
     for idx in tqdm(range(samples.data_num)):
         print(samples.ldi_file[idx])
-        constructer.get_frame(samples.ldi_file[idx],
-                              samples.frame_num[idx],
-                              samples.depth_file[idx])
+        print(samples.frame_num[idx])
+        print(samples.depth_file[idx])
+        frames_dict = constructer.get_frame(samples.ldi_file[idx],
+                                            samples.frame_num[idx],
+                                            samples.depth_file[idx])
         if config['verbose']:
             print("Constructed frame in: " + clock.run_time())
+        for track_type, frame in frames_dict.items():
+            write_file = os.path.join(samples.video_dir, track_type, str(samples.frame_num[idx])+config['img_format'])
+            print(write_file)
+            cv2.imwrite(write_file, cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+
     print("Constructed videos in: " + clock.total_time())
 
 
@@ -44,6 +52,9 @@ if __name__ == '__main__':
     parser.add_argument('--vid', type=str, help='Specific video to process')
     args = parser.parse_args()
     config = yaml.load(open(args.config, 'r'))
+    if config['server']:
+        print('Using Mesa graphics backend for headless server')
+        vispy.use('osmesa')
     samples = utils_extra.data_files(config['src_dir'],
                                      config['tgt_dir'],
                                      args.vid)
