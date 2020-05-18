@@ -59,40 +59,43 @@ def run_samples(samples, config):
     print('Estimating Frames...')
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]
-        image = imageio.imread(samples.im_file[idx])
-        int_mtx = utils_extra.int_mtx_CPY(image)
-        config['output_h'], config['output_w'] = np.load(samples.depth_file[idx]).shape[:2]
-        frac = config['longer_side_len'] / max(config['output_h'], config['output_w'])
-        config['output_h'], config['output_w'] = int(config['output_h'] * frac), int(config['output_w'] * frac)
-        config['original_h'], config['original_w'] = config['output_h'], config['output_w']
-        if image.ndim == 2:
-            image = image[..., None].repeat(3, -1)
-        if np.sum(np.abs(image[..., 0] - image[..., 1])) == 0 and np.sum(np.abs(image[..., 1] - image[..., 2])) == 0:
-            config['gray_image'] = True
-        else:
-            config['gray_image'] = False
-        image = cv2.resize(image, (config['output_w'], config['output_h']), interpolation=cv2.INTER_AREA)
-        depth = read_MiDaS_depth(samples.depth_file[idx], 3.0, config['output_h'], config['output_w'])
-        mean_loc_depth = depth[depth.shape[0]//2, depth.shape[1]//2]
-        vis_photos, vis_depths = sparse_bilateral_filtering(depth.copy(), image.copy(), config, num_iter=config['sparse_iter'], spdb=False)
-        depth = vis_depths[-1]
-        if config['verbose']:
-            print("Loaded rgb model in: " + clock.run_time())
-            print("======= Starting LDI estimation ======")
-        clock.reset()
-        rt_info = write_ply(image,
-                              depth,
-                              int_mtx,
-                              samples.ldi_file[idx],
-                              config,
-                              rgb_model,
-                              depth_edge_model,
-                              depth_edge_model,
-                              depth_feat_model)
-        print("Estimated LDI in: " + clock.run_time())
-        # torch.cuda.empty_cache()
-        if config['verbose']:
-            print("Estimated LDI in: " + clock.run_time())
+        idx = id
+        try:
+            image = imageio.imread(samples.im_file[idx])
+            int_mtx = utils_extra.int_mtx_CPY(image)
+            config['output_h'], config['output_w'] = np.load(samples.depth_file[idx]).shape[:2]
+            frac = config['longer_side_len'] / max(config['output_h'], config['output_w'])
+            config['output_h'], config['output_w'] = int(config['output_h'] * frac), int(config['output_w'] * frac)
+            config['original_h'], config['original_w'] = config['output_h'], config['output_w']
+            if image.ndim == 2:
+                image = image[..., None].repeat(3, -1)
+            if np.sum(np.abs(image[..., 0] - image[..., 1])) == 0 and np.sum(np.abs(image[..., 1] - image[..., 2])) == 0:
+                config['gray_image'] = True
+            else:
+                config['gray_image'] = False
+            image = cv2.resize(image, (config['output_w'], config['output_h']), interpolation=cv2.INTER_AREA)
+            depth = read_MiDaS_depth(samples.depth_file[idx], 3.0, config['output_h'], config['output_w'])
+            mean_loc_depth = depth[depth.shape[0]//2, depth.shape[1]//2]
+            vis_photos, vis_depths = sparse_bilateral_filtering(depth.copy(), image.copy(), config, num_iter=config['sparse_iter'], spdb=False)
+            depth = vis_depths[-1]
+            if config['verbose']:
+                print("Loaded rgb model in: " + clock.run_time())
+                print("======= Starting LDI estimation ======")
+            clock.reset()
+            rt_info = write_ply(image,
+                                  depth,
+                                  int_mtx,
+                                  samples.ldi_file[idx],
+                                  config,
+                                  rgb_model,
+                                  depth_edge_model,
+                                  depth_edge_model,
+                                  depth_feat_model)
+            # torch.cuda.empty_cache()
+            if config['verbose']:
+                print("Estimated LDI in: " + clock.run_time())
+        except:
+            print('Error with file:'+samples.depth_file[idx])
     print("Estimated frames in: " + clock.total_time())
 
 
