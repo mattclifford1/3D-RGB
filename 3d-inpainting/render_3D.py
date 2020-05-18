@@ -173,8 +173,8 @@ class frame_constucter:
                                    anchor,
                                    self.border)
             frames_dict[video_traj_type] = img_gen
-            write_file = os.path.join(output_dir,str(num)+'-'+video_traj_type+'.jpg')
-            cv2.imwrite(write_file, cv2.cvtColor(img_gen, cv2.COLOR_RGB2BGR))
+            # write_file = os.path.join(output_dir,str(num)+'-'+video_traj_type+'.jpg')
+            # cv2.imwrite(write_file, cv2.cvtColor(img_gen, cv2.COLOR_RGB2BGR))
            # cv2.imwrite(os.path.join(output_dir, 'crop_stereo'+str(num)+video_traj_type+'.jpg'), cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
         return frames_dict
 

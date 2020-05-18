@@ -33,9 +33,10 @@ def run_samples(samples, config):
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]
         idx = id
+        print(samples.ldi_file[idx])
         # constructer.load_ply(samples.ldi_file[idx])
         frames_dict = constructer.get_frame(samples.ldi_file[idx],
-                                            samples.frame_num[idx],
+                                            idx,
                                             samples.depth_file[idx])
         if config['verbose']:
             print("Constructed frame in: " + clock.run_time())
