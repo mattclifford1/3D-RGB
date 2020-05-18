@@ -60,6 +60,16 @@ def diff_base(file1, file2, file3):
         return False
 
 
+def run_ordering(samples):
+    samples.collect_ldi()
+    for id in range(samples.data_num):
+        # print(samples.frame_num[id])
+        id = samples.frame_num[id]
+        # print(samples.im_file[id])
+        # print(samples.depth_file[id])
+        # print(samples.ldi_file[id])
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, default='yaml to control run')
@@ -77,3 +87,4 @@ if __name__ == '__main__':
                                   config['tgt_dir'],
                                   args.vid)
     sort_lists(samples)
+    run_ordering(samples)
