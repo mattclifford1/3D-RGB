@@ -77,7 +77,6 @@ class frame_constucter:
         take from run scipt - not sure if copy needed or not yet
         LOOK into memory usage here.......
         '''
-        print('Loading PLY')
         ply = read_ply(file_name)
         self.verts = ply[0].copy()
         self.colors = ply[1].copy()
@@ -105,7 +104,6 @@ class frame_constucter:
 
         self.fov_in_rad = max(self.cam_mesh_graph['vFov'], self.cam_mesh_graph['hFov'])
         self.fov = (self.fov_in_rad * 180 / np.pi)
-        print("fov: " + str(self.fov))
         self.init_factor = 1
         if self.config.get('anti_flickering') is True:
             self.init_factor = 3
@@ -160,13 +158,12 @@ class frame_constucter:
         # print('Running for all poses')
         output_dir = os.path.join(self.config['tgt_dir'], 'video-frames')
         os.makedirs(output_dir, exist_ok=True)
-        print('Writing to: '+output_dir)
-        frames_dict = {}
         normal_canvas = self.get_canvas()
         anchor, plane_width = self.get_anchor_plane(normal_canvas)
         normal_canvas.add_data(self.verts,
                                self.faces,
                                self.colors)
+        frames_dict = {}
         for video_pose, video_traj_type in zip(self.videos_poses, self.video_traj_types):
             img_gen = self.gen_rgb(video_pose[num],
                                    video_traj_type,
