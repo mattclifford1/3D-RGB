@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH -p gpu # Partition to submit to
-#SBATCH --gres=test:1
+#SBATCH -p test # Partition to submit to
+# SBATCH --gres=gpu:1 # use this for gpu only
 # SBATCH --account=comsm0018       # use the course account
 
 module load languages/anaconda3/2019.07-3.6.5-tflow-1.14

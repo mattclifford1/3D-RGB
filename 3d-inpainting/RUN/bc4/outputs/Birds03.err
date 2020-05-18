@@ -1,0 +1,14 @@
+
+The following have been reloaded with a version change:
+  1) GCC/5.4.0-2.26 => GCC/4.9.3-2.25
+  2) GCCcore/5.4.0 => GCCcore/4.9.3
+  3) binutils/2.26-GCCcore-5.4.0 => binutils/2.25-GCCcore-4.9.3
+
+  0%|          | 0/184 [00:00<?, ?it/s]  1%|          | 1/184 [00:23<1:11:49, 23.55s/it]  1%|          | 1/184 [00:23<1:11:49, 23.55s/it]
+Traceback (most recent call last):
+  File "construct_vid.py", line 61, in <module>
+    run_samples(samples, config)
+  File "construct_vid.py", line 37, in run_samples
+    samples.frame_num[idx],
+IndexError: list index out of range
+srun: error: compute203: task 0: Exited with exit code 1
