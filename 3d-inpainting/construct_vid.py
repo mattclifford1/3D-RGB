@@ -35,9 +35,12 @@ def run_samples(samples, config):
         idx = id
         print(samples.ldi_file[idx])
         # constructer.load_ply(samples.ldi_file[idx])
-        frames_dict = constructer.get_frame(samples.ldi_file[idx],
-                                            idx,
-                                            samples.depth_file[idx])
+        try:
+            frames_dict = constructer.get_frame(samples.ldi_file[idx],
+                                                idx,
+                                                samples.depth_file[idx])
+        except:
+            print('Error with file: ' + samples.ldi_file[idx])
         if config['verbose']:
             print("Constructed frame in: " + clock.run_time())
         for track_type, frame in frames_dict.items():
