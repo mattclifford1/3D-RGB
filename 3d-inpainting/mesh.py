@@ -2127,9 +2127,6 @@ def read_ply(mesh_fi):
 class Canvas_view():
     def __init__(self,
                  fov,
-                 verts,
-                 faces,
-                 colors,
                  canvas_size,
                  factor=1,
                  bgcolor='gray',
@@ -2143,6 +2140,8 @@ class Canvas_view():
         self.mesh.attach(Alpha(1.0))
         self.view.add(self.mesh)
         self.tr = self.view.camera.transform
+
+    def add_data(self, verts, faces, colors):
         self.mesh.set_data(vertices=verts, faces=faces, vertex_colors=colors[:, :3])
         self.translate([0,0,0])
         self.rotate(axis=[1,0,0], angle=180)
