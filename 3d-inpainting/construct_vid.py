@@ -41,7 +41,7 @@ def run_samples(samples, config):
         if config['verbose']:
             print("Constructed frame in: " + clock.run_time())
         for track_type, frame in frames_dict.items():
-            write_file = os.path.join(samples.video_dir, track_type, str(samples.frame_num[idx])+config['img_format'])
+            write_file = os.path.join(samples.video_dir, track_type, str(idx)+config['img_format'])
             cv2.imwrite(write_file, cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 
     print("Constructed videos in: " + clock.total_time())
