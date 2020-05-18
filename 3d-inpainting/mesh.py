@@ -2354,6 +2354,7 @@ class frame_constucter:
     def load_ply(self, file_name):
         '''
         take from run scipt - not sure if copy needed or not yet
+        LOOK into memory usage here.......
         '''
         print('Loading PLY')
         ply = read_ply(file_name)

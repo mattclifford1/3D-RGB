@@ -31,9 +31,10 @@ def run_samples(samples, config):
     constructer = mesh.frame_constucter(config, samples.im_file[0], samples.depth_file[0], len(samples.frame_num))
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]
-        frames_dict = constructer.get_frame(samples.ldi_file[idx],
-                                            samples.frame_num[idx],
-                                            samples.depth_file[idx])
+        constructer.load_ply(samples.ldi_file[idx])
+        # frames_dict = constructer.get_frame(samples.ldi_file[idx],
+        #                                     samples.frame_num[idx],
+        #                                     samples.depth_file[idx])
         if config['verbose']:
             print("Constructed frame in: " + clock.run_time())
         for track_type, frame in frames_dict.items():
