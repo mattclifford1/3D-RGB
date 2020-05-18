@@ -37,10 +37,10 @@ def run_samples(samples, config):
         #                                     samples.depth_file[idx])
         if config['verbose']:
             print("Constructed frame in: " + clock.run_time())
-        for track_type, frame in frames_dict.items():
-            write_file = os.path.join(samples.video_dir, track_type, str(samples.frame_num[idx])+config['img_format'])
-            print(write_file)
-            cv2.imwrite(write_file, cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+        # for track_type, frame in frames_dict.items():
+        #     write_file = os.path.join(samples.video_dir, track_type, str(samples.frame_num[idx])+config['img_format'])
+        #     print(write_file)
+        #     cv2.imwrite(write_file, cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 
     print("Constructed videos in: " + clock.total_time())
 
