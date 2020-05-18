@@ -1,3 +1,3 @@
 #!/bin/sh
-./RUN/depth.sh $1 $2
-./RUN/ldi.sh $1 $2
+./RUN/depth.sh configs/bc4.yml $1
+./RUN/ldi.sh configs/bc4.yml $1
