@@ -152,16 +152,24 @@ class data_files:
         return file_dict
 
 
-    def make_extra_files(self, list_data):
+    def make_extra_files(self, list_data, computed_ok=True):
         for tmp_list, file_format, file_dir in list_data:
-            already_run = os.listdir(file_dir)
-            already_run = [os.path.join(file_dir, file) for file in already_run]
-            for base in self.base_file:
-                to_be_computed_file = os.path.join(file_dir, base+file_format)
-                if to_be_computed_file in already_run:
-                    print('Already compututed: '+to_be_computed_file)
-                else:
-                    tmp_list.append(to_be_computed_file)
+            if not computed_ok:
+                already_run = os.listdir(file_dir)
+                already_run = [os.path.join(file_dir, file) for file in already_run]
+                for base in self.base_file:
+                    to_be_computed_file = base+file_format
+                    if os.path.join(file_dir, to_be_computed_file) in already_run:
+                        print('Already compututed: '+to_be_computed_file)
+                    else:
+                        tmp_list.append(to_be_computed_file)
+            else:
+                for base in self.base_file:
+                    tmp_list.append(base+file_format)
+            tmp_dict = {}
+            for file in tmp_list:
+                file_dict[int(file.split('.')[0])] = os.path.join(file_dir, file)
+            tmp_list = tmp_dict
 
 
     def collect_extra_files(self, dir, supported_formats):
