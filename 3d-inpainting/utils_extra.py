@@ -168,7 +168,7 @@ class data_files:
                     tmp_list.append(base+file_format)
             tmp_dict = {}
             for file in tmp_list:
-                file_dict[int(file.split('.')[0])] = os.path.join(file_dir, file)
+                tmp_dict[int(file.split('.')[0])] = os.path.join(file_dir, file)
             tmp_list = tmp_dict
 
 
