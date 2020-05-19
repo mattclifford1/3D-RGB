@@ -116,18 +116,15 @@ class data_files:
     def collect_rgb(self):
         self.im_file = self.remove_computed(self.im_dir, self.depth_dir)
         self.im_file = self.clean(self.im_file, self.im_formats, self.im_dir)
-        self.depth_file = []
-        self.ldi_file = []
-        self.make_extra_files([[self.depth_file, self.depth_write, self.depth_dir],
-                               [self.ldi_file, self.ldi_write, self.ldi_dir]])
+        [self.depth_file, self.ldi_file] = self.make_extra_files([[self.depth_write, self.depth_dir],
+                                                                  [self.ldi_write, self.ldi_dir]])
         print(self.depth_file)
 
 
     def collect_depth(self):
         self.depth_file = self.remove_computed(self.depth_dir, self.ldi_dir)
         self.depth_file = self.clean(self.depth_file, self.depth_formats, self.depth_dir)
-        self.ldi_file = []
-        self.make_extra_files([[self.ldi_file, self.ldi_write, self.ldi_dir]])
+        [self.ldi_file] = self.make_extra_files([[self.ldi_write, self.ldi_dir]])
         self.im_file = self.collect_extra_files(self.im_dir, self.im_formats)
 
 
@@ -154,24 +151,23 @@ class data_files:
 
 
     def make_extra_files(self, list_data, computed_ok=True):
-        for tmp_list, file_format, file_dir in list_data:
+        for file_format, file_dir in list_data:
+            out_dicts = []
             tmp_dict = {}
             if not computed_ok:
                 print('Removing already computed files from list')
                 already_run = os.listdir(file_dir)
                 already_run = [os.path.join(file_dir, file) for file in already_run]
                 for base in self.base_file:
-                    to_be_computed_file = base+file_format
-                    if os.path.join(file_dir, to_be_computed_file) in already_run:
-                        print('Already compututed: '+to_be_computed_file)
+                    file = base + file_format
+                    if os.path.join(file_dir, file) in already_run:
+                        print('Already compututed: '+file)
                     else:
-                        tmp_list.append(to_be_computed_file)
-                    for file in tmp_list:
                         tmp_dict[int(file.split('.')[0])] = os.path.join(file_dir, file)
             else:
                 for base in self.base_file:
                     tmp_dict[int(base)] = os.path.join(file_dir, base+file_format)
-            tmp_list = tmp_dict
+            out_dicts.append(tmp_dict)
 
 
 
