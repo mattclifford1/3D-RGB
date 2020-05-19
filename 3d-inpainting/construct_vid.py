@@ -41,7 +41,7 @@ def run_samples(samples, config):
         except:
             print('Error with file: ' + samples.ldi_file[idx])
         if config['verbose']:
-            print(samples.im_file[idx])
+            print(idx)
             print(samples.depth_file[idx])
             print(samples.ldi_file[idx])
             print("Constructed frame in: " + clock.run_time())

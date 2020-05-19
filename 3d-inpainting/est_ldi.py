@@ -9,7 +9,7 @@ from tqdm import tqdm
 import yaml
 import time
 import sys
-from mesh import write_ply, read_ply, output_3d_photo
+import mesh
 from utils import get_MiDaS_samples, read_MiDaS_depth
 import torch
 import cv2
@@ -82,15 +82,15 @@ def run_samples(samples, config):
                 print("Loaded rgb model in: " + clock.run_time())
                 print("======= Starting LDI estimation ======")
             clock.reset()
-            rt_info = write_ply(image,
-                                  depth,
-                                  int_mtx,
-                                  samples.ldi_file[idx],
-                                  config,
-                                  rgb_model,
-                                  depth_edge_model,
-                                  depth_edge_model,
-                                  depth_feat_model)
+            rt_info = mesh.write_ply(image,
+                                     depth,
+                                     int_mtx,
+                                     samples.ldi_file[idx],
+                                     config,
+                                     rgb_model,
+                                     depth_edge_model,
+                                     depth_edge_model,
+                                     depth_feat_model)
             # torch.cuda.empty_cache()
             if config['verbose']:
                 print(samples.im_file[idx])
