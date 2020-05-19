@@ -170,7 +170,7 @@ class data_files:
                         tmp_dict[int(file.split('.')[0])] = os.path.join(file_dir, file)
             else:
                 for base in self.base_file:
-                    tmp_dict[int(base)] = os.path.join(file_dir, base+file_formaprint(self.depth_file)
+                    tmp_dict[int(base)] = os.path.join(file_dir, base+file_format)
             tmp_list = tmp_dict
 
 
