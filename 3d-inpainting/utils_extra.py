@@ -120,6 +120,7 @@ class data_files:
         self.ldi_file = []
         self.make_extra_files([[self.depth_file, self.depth_write, self.depth_dir],
                                [self.ldi_file, self.ldi_write, self.ldi_dir]])
+        print(self.depth_file)
 
 
     def collect_depth(self):
@@ -154,7 +155,9 @@ class data_files:
 
     def make_extra_files(self, list_data, computed_ok=True):
         for tmp_list, file_format, file_dir in list_data:
+            tmp_dict = {}
             if not computed_ok:
+                print('Removing already computed files from list')
                 already_run = os.listdir(file_dir)
                 already_run = [os.path.join(file_dir, file) for file in already_run]
                 for base in self.base_file:
@@ -163,13 +166,13 @@ class data_files:
                         print('Already compututed: '+to_be_computed_file)
                     else:
                         tmp_list.append(to_be_computed_file)
+                    for file in tmp_list:
+                        tmp_dict[int(file.split('.')[0])] = os.path.join(file_dir, file)
             else:
                 for base in self.base_file:
-                    tmp_list.append(base+file_format)
-            tmp_dict = {}
-            for file in tmp_list:
-                tmp_dict[int(file.split('.')[0])] = os.path.join(file_dir, file)
+                    tmp_dict[int(base)] = os.path.join(file_dir, base+file_formaprint(self.depth_file)
             tmp_list = tmp_dict
+
 
 
     def collect_extra_files(self, dir, supported_formats):
