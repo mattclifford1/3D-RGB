@@ -149,8 +149,10 @@ class data_files:
         return file_dict
 
 
-    def make_extra_files(self, list_data, computed_ok=True):
+    def make_extra_files(self, list_data):
+        computed_ok = True
         for file_format, file_dir in list_data:
+            print(file_dir)
             out_dicts = []
             tmp_dict = {}
             if not computed_ok:
