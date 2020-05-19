@@ -109,7 +109,6 @@ class data_files:
 
     def make_dirs(self, *args):
         for dir in args:
-            print(dir)
             os.makedirs(dir, exist_ok=True)
 
 
@@ -168,6 +167,7 @@ class data_files:
                 for base in self.base_file:
                     tmp_dict[int(base)] = os.path.join(file_dir, base+file_format)
             out_dicts.append(tmp_dict)
+        return out_dicts
 
 
 
