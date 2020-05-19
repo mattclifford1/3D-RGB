@@ -11,7 +11,7 @@ video_postfix: ['dolly-zoom-in', 'zoom-in', 'circle', 'swing', 'control']
 specific: ''
 longer_side_len: 960
 src_dir: nu-data/frames
-tgt_dir: /mnt/storage/scratch/lw15979/frames-2
+tgt_dir: /mnt/storage/scratch/lw15979/frames-3
 load_ply: False
 save_ply: True
 inference_video: True
