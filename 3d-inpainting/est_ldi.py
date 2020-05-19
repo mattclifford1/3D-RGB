@@ -24,7 +24,7 @@ from bilateral_filtering import sparse_bilateral_filtering
 
 import utils_extra
 
-def load_models(config):
+def load_models(config, clock):
     device = utils_extra.set_device(config)
     torch.cuda.empty_cache()
     depth_edge_model = Inpaint_Edge_Net(init_weights=True)
@@ -55,7 +55,7 @@ def load_models(config):
 
 def run_samples(samples, config):
     clock = utils_extra.timer()
-    rgb_model, depth_edge_model, depth_feat_model = load_models(config)
+    rgb_model, depth_edge_model, depth_feat_model = load_models(config, clock)
     print('Estimating Frames...')
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]

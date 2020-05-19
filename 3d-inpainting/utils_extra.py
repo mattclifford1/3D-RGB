@@ -117,7 +117,6 @@ class data_files:
         self.im_file = self.clean(self.im_file, self.im_formats, self.im_dir)
         [self.depth_file, self.ldi_file] = self.make_extra_files([[self.depth_write, self.depth_dir],
                                                                   [self.ldi_write, self.ldi_dir]])
-        print(self.depth_file)
 
 
     def collect_depth(self):
