@@ -33,7 +33,6 @@ def run_samples(samples, config):
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]
         idx = id
-        print(samples.ldi_file[idx])
         # constructer.load_ply(samples.ldi_file[idx])
         try:
             frames_dict = constructer.get_frame(samples.ldi_file[idx],
@@ -42,6 +41,9 @@ def run_samples(samples, config):
         except:
             print('Error with file: ' + samples.ldi_file[idx])
         if config['verbose']:
+            print(samples.im_file[idx])
+            print(samples.depth_file[idx])
+            print(samples.ldi_file[idx])
             print("Constructed frame in: " + clock.run_time())
         for track_type, frame in frames_dict.items():
             write_file = os.path.join(samples.video_dir, track_type, str(idx)+config['img_format'])

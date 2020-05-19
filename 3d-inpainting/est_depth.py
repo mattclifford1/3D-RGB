@@ -23,12 +23,13 @@ def run_samples(samples, config):
                               MiDaS_utils,
                               target_w=640.0,
                               device=device)
-            # save results
             np.save(samples.depth_file[idx], depth)
             depth = (depth+np.min(depth))/np.max(depth)
             depth = depth*255
             # cv2.imwrite(samples.depth_file[idx].split('.')[0]+'.png', depth)
             if config['verbose']:
+                print(samples.im_file[idx])
+                print(samples.depth_file[idx])
                 print("Depth estimated in: " + clock.run_time())
         except:
             print('Error with file: '+samples.im_file[idx])

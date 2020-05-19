@@ -93,6 +93,9 @@ def run_samples(samples, config):
                                   depth_feat_model)
             # torch.cuda.empty_cache()
             if config['verbose']:
+                print(samples.im_file[idx])
+                print(samples.depth_file[idx])
+                print(samples.ldi_file[idx])
                 print("Estimated LDI in: " + clock.run_time())
         except:
             print('Error with file:'+samples.depth_file[idx])

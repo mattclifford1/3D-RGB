@@ -65,11 +65,16 @@ class frame_constucter:
         generic_pose = np.eye(4)   #copy from ref_pose???
         for traj_idx in range(len(self.config['traj_types'])):
             tgt_poses = []
-            sx, sy, sz = utils.path_planning(self.num_frames, self.config['x_shift_range'][traj_idx], self.config['y_shift_range'][traj_idx],
-                                       self.config['z_shift_range'][traj_idx], path_type=self.config['traj_types'][traj_idx])
+            sx, sy, sz = utils.path_planning(self.num_frames,
+                                             self.config['x_shift_range'][traj_idx],
+                                             self.config['y_shift_range'][traj_idx],
+                                             self.config['z_shift_range'][traj_idx],
+                                             path_type=self.config['traj_types'][traj_idx])
             for xx, yy, zz in zip(sx, sy, sz):
                 tgt_poses.append(generic_pose * 1.)
-                tgt_poses[-1][:3, -1] = np.array([xx, yy, zz])
+                if self.config['traj_types'][traj_idx] != 'control':
+                    '''change if we require camera movement'''
+                    tgt_poses[-1][:3, -1] = np.array([xx, yy, zz])
             self.videos_poses += [tgt_poses]
 
     def load_ply(self, file_name):
