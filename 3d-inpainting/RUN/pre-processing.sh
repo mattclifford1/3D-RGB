@@ -2,4 +2,4 @@
 source ~/.3D_env/bin/activate
 
 echo "============ VIDEO PREPROCESSING ============"
-python preprocess_vid.py --config preprocess_vid.yml
+python process-data/preprocess_vid.py --config configs/preprocess_vid.yml
