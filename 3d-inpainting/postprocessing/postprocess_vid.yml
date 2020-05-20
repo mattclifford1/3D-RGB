@@ -1,5 +1,7 @@
-input_dir: ../nu-est/first-run
+input_dir: ../nu-est/run
 save_dir: ../nu-est/test-vids
 completed_dir: ../nu-data/vids-post
-fps: 30
+fps: 24
 vid_format: .mp4
+vid_types: ['control', 'circle', 'zoom-in', 'swing']
+vid_folder: video-frames
