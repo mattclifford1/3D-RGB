@@ -1,5 +1,5 @@
-input_dir: ../nu-est/frames-3
-save_dir: ../nu-est/test-vids
+input_dir: nu-est/frames-3
+save_dir: nu-est/test-vids
 completed_dir: ../nu-data/vids-post
 fps: 24
 vid_format: .mp4

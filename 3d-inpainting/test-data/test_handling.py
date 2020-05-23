@@ -34,6 +34,13 @@ def test_removed_input(samples):
         print('++++++++++ PASS +++++++++++')
 
 
+def test_order(samples):
+    if samples.frame_num != sorted(samples.frame_num):
+        print('--------- Fail frame sort -----------')
+    else:
+        print('++++++++++ PASS +++++++++++')
+
+
 def sort_lists(samples):
     samples.collect_ldi()
     fail_count = 0
@@ -83,6 +90,7 @@ if __name__ == '__main__':
 
     compare_not_run(samples)
     test_removed_input(samples)
+    test_order(samples)
     samples = utils_extra.data_files(config['src_dir'],
                                   config['tgt_dir'],
                                   args.vid)

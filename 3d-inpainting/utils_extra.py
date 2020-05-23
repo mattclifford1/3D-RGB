@@ -2,6 +2,7 @@ import time
 import os
 import numpy as np
 import utils
+import cv2
 
 def set_device(config):
     if isinstance(config["gpu_ids"], int) and (config["gpu_ids"] >= 0):
@@ -65,6 +66,31 @@ def vid_meta_CPY_legacy(config, depth_file):
     return config
 
 
+def read_depth(file, depth_rescale=3.0, out_height=None, out_width=None, midas_process=False, bits=16):
+    '''
+    Taken from base code that reads MiDaS estimated depth
+    '''
+    if bits == 16:
+        depth = cv2.imread(file, -1)
+        # depth = (depth>>3)|(depth<<13)  # if bit shifted
+    else:
+        depth = cv2.imread(file)
+    if len(depth.shape) == 3:
+        if (depth[:,:,0]==depth[:,:,1]).all() and (depth[:,:,1]==depth[:,:,2]).all():
+            depth = depth[:,:,0]
+        else:
+            depth = np.average(depth, axis=2)
+    if midas_process:
+        depth = depth - depth.min()
+        depth = cv2.blur(depth / depth.max(), ksize=(3, 3)) * depth.max()
+        depth = (depth / depth.max()) * depth_rescale
+    if out_height is not None and out_width is not None:
+        depth = resize(depth / depth.max(), (out_height, out_width), order=1) * depth.max()
+    if midas_process:
+        depth = 1. / np.maximum(depth, 0.05)
+    return depth
+
+
 class timer:
     def __init__(self):
         self.start_time = time.time()
@@ -100,7 +126,7 @@ class data_files:
         self.ldi_dir = os.path.join(tgt_dir, vid, 'ldi')
         self.video_dir = os.path.join(tgt_dir, vid, 'video-frames')
         self.im_formats=['jpg', 'png', 'jpeg']
-        self.depth_formats=['npy']
+        self.depth_formats=['npy', 'png']
         self.ldi_formats=['ply']
         self.make_dirs(self.im_dir, self.depth_dir, self.ldi_dir, self.video_dir)
         self.depth_write = '.npy'
@@ -141,6 +167,7 @@ class data_files:
         file_list = self.remove_upsupported(file_list, supported_formats, type='format')
         self.base_file = [file.split('.')[0] for file in file_list]
         self.frame_num = [int(file) for file in self.base_file]
+        self.frame_num = sorted(self.frame_num)
         self.data_num = len(file_list)
         file_dict = {}
         for file in file_list:

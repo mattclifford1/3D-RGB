@@ -74,7 +74,10 @@ def run_samples(samples, config):
             else:
                 config['gray_image'] = False
             image = cv2.resize(image, (config['output_w'], config['output_h']), interpolation=cv2.INTER_AREA)
-            depth = read_MiDaS_depth(samples.depth_file[idx], 3.0, config['output_h'], config['output_w'])
+            if samples.depth_file[idx].split('.')[-1] == 'npy':
+                depth = read_MiDaS_depth(samples.depth_file[idx], 3.0, config['output_h'], config['output_w'])
+            else:
+                depth = utils_extra.read_depth(samples.depth_file[idx], 3.0, config['output_h'], config['output_w'])
             mean_loc_depth = depth[depth.shape[0]//2, depth.shape[1]//2]
             vis_photos, vis_depths = sparse_bilateral_filtering(depth.copy(), image.copy(), config, num_iter=config['sparse_iter'], spdb=False)
             depth = vis_depths[-1]
