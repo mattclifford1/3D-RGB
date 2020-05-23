@@ -80,10 +80,11 @@ def read_depth(file, depth_rescale=3.0, out_height=None, out_width=None, midas_p
             depth = depth[:,:,0]
         else:
             depth = np.average(depth, axis=2)
+    # normalise depth
+    depth = depth - depth.min()
     if midas_process:
-        depth = depth - depth.min()
         depth = cv2.blur(depth / depth.max(), ksize=(3, 3)) * depth.max()
-        depth = (depth / depth.max()) * depth_rescale
+    depth = (depth / depth.max()) * depth_rescale
     if out_height is not None and out_width is not None:
         depth = resize(depth / depth.max(), (out_height, out_width), order=1) * depth.max()
     if midas_process:
