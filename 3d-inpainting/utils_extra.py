@@ -4,6 +4,7 @@ import numpy as np
 import utils
 import cv2
 from skimage.transform import resize
+import imageio
 
 def set_device(config):
     if isinstance(config["gpu_ids"], int) and (config["gpu_ids"] >= 0):
@@ -67,7 +68,7 @@ def vid_meta_CPY_legacy(config, depth_file):
     return config
 
 
-def read_depth(file, depth_rescale=3.0, out_height=None, out_width=None, midas_process=False, bits=16):
+def read_depth(file, depth_rescale=3.0, out_height=None, out_width=None, bits=8):
     '''
     Taken from base code that reads MiDaS estimated depth
     '''
@@ -75,7 +76,7 @@ def read_depth(file, depth_rescale=3.0, out_height=None, out_width=None, midas_p
         depth = cv2.imread(file, -1)
         # depth = (depth>>3)|(depth<<13)  # if bit shifted
     else:
-        depth = cv2.imread(file)
+        disp = imageio.imread(disp_fi).astype(np.float32)
     if len(depth.shape) == 3:
         if (depth[:,:,0]==depth[:,:,1]).all() and (depth[:,:,1]==depth[:,:,2]).all():
             depth = depth[:,:,0]
@@ -83,13 +84,11 @@ def read_depth(file, depth_rescale=3.0, out_height=None, out_width=None, midas_p
             depth = np.average(depth, axis=2)
     # normalise depth
     depth = depth - depth.min()
-    if midas_process:
-        depth = cv2.blur(depth / depth.max(), ksize=(3, 3)) * depth.max()
+    depth = cv2.blur(depth / depth.max(), ksize=(3, 3)) * depth.max()
     depth = (depth / depth.max()) * depth_rescale
     if out_height is not None and out_width is not None:
         depth = resize(depth / depth.max(), (out_height, out_width), order=1) * depth.max()
-    if midas_process:
-        depth = 1. / np.maximum(depth, 0.05)
+    depth = 1. / np.maximum(depth, 0.05)
     return depth
 
 
