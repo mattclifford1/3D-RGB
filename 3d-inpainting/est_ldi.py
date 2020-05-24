@@ -75,7 +75,7 @@ def run_samples(samples, config):
             depth = read_MiDaS_depth(samples.depth_file[idx], 3.0, config['output_h'], config['output_w'])
         else:
             config['output_h'], config['output_w'] = cv2.imread(samples.depth_file[idx]).shape[:2]
-            config['output_h'], config['output_w'] = 540, 720
+            config['output_h'], config['output_w'] = 540, 960#720
             config = edit_sizes(config)
             depth = utils_extra.read_depth(samples.depth_file[idx],
                                             config['depth_rescale'],
