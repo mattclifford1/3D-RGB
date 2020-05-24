@@ -75,12 +75,14 @@ def run_samples(samples, config):
             depth = read_MiDaS_depth(samples.depth_file[idx], 3.0, config['output_h'], config['output_w'])
         else:
             config['output_h'], config['output_w'] = cv2.imread(samples.depth_file[idx]).shape[:2]
+            config['output_h'], config['output_w'] = 540, 720
             config = edit_sizes(config)
             depth = utils_extra.read_depth(samples.depth_file[idx],
                                             config['depth_rescale'],
                                             config['output_h'],
                                             config['output_w'],
                                             config['inv_depth'])
+        print(depth.shape)
         if image.ndim == 2:
             image = image[..., None].repeat(3, -1)
         if np.sum(np.abs(image[..., 0] - image[..., 1])) == 0 and np.sum(np.abs(image[..., 1] - image[..., 2])) == 0:
@@ -91,6 +93,7 @@ def run_samples(samples, config):
         mean_loc_depth = depth[depth.shape[0]//2, depth.shape[1]//2]
         vis_photos, vis_depths = sparse_bilateral_filtering(depth.copy(), image.copy(), config, num_iter=config['sparse_iter'], spdb=False)
         depth = vis_depths[-1]
+        print(depth.shape)
         if config['verbose']:
             print("Loaded rgb model in: " + clock.run_time())
             print("======= Starting LDI estimation ======")
