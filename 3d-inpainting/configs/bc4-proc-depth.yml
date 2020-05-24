@@ -41,5 +41,5 @@ crop_border: [0.03, 0.03, 0.05, 0.03]
 anti_flickering: True
 verbose: False
 server: True
-inv_depth: False
-depth_rescale: 1.0
+inv_depth: True
+depth_rescale: 3.0

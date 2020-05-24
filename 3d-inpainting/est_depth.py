@@ -15,7 +15,6 @@ def run_samples(samples, config):
     print('Estimating Frames...')
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]
-        idx = id
         try:
             depth = run_depth(samples.im_file[idx],
                               config['MiDaS_model_ckpt'],

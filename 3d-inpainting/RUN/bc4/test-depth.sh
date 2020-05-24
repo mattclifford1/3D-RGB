@@ -1,0 +1,10 @@
+dir="RUN/bc4/outputs/"   # you will need to make outputs directory using 'mkdir outputs'
+ram="16G"        # change these
+time="0-5:00"    # accordingly
+job_name="d-LDI"
+CONFIG="configs/bc4.yml"
+VID="depth-child"
+sbatch -t $time -J $job_name$VID -o $dir$VID'.out' -e $dir$VID'.err' --mem=$ram RUN/bc4/submit_job.sh sh RUN/ldi.sh $CONFIG $VID
+job_name="d-p-LDI"
+CONFIG="configs/bc4-proc-depth.yml"
+sbatch -t $time -J $job_name$VID -o $dir$VID'.out' -e $dir$VID'.err' --mem=$ram RUN/bc4/submit_job.sh sh RUN/ldi.sh $CONFIG $VID

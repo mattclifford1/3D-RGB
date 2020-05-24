@@ -59,7 +59,6 @@ def run_samples(samples, config):
     print('Estimating Frames...')
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]
-        idx = id
         try:
             image = imageio.imread(samples.im_file[idx])
             int_mtx = utils_extra.int_mtx_CPY(image)
@@ -75,7 +74,11 @@ def run_samples(samples, config):
                 config['gray_image'] = False
             image = cv2.resize(image, (config['output_w'], config['output_h']), interpolation=cv2.INTER_AREA)
             if samples.depth_file[idx].split('.')[-1] == 'npy':
-                depth = read_MiDaS_depth(samples.depth_file[idx], 3.0, config['output_h'], config['output_w'])
+                depth = read_MiDaS_depth(samples.depth_file[idx],
+                                         config['depth_rescale'],
+                                         config['output_h'],
+                                         config['output_w'],
+                                         config['inv_depth'])
             else:
                 depth = utils_extra.read_depth(samples.depth_file[idx], 3.0, config['output_h'], config['output_w'])
             mean_loc_depth = depth[depth.shape[0]//2, depth.shape[1]//2]
