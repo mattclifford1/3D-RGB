@@ -1920,6 +1920,7 @@ def write_ply(image,
     #     for node in cc:
     #         edge_canvas[node[0], node[1]] = cc_id
     # f, ((ax0, ax1, ax2)) = plt.subplots(1, 3, sharex=True, sharey=True); ax0.imshow(1./depth); ax1.imshow(image); ax2.imshow(edge_canvas); plt.show()
+    print('Forward')
     input_mesh, info_on_pix, specific_edge_nodes, new_edge_ccs, connect_points_ccs, image = DL_inpaint_edge(input_mesh,
                                                                                                             info_on_pix,
                                                                                                             config,
@@ -1942,6 +1943,7 @@ def write_ply(image,
                                                                                                             specific_edge_id,
                                                                                                             specific_edge_loc,
                                                                                                             inpaint_iter=0)
+    print('Done')
     specific_edge_id = []
     edge_canvas = np.zeros((input_mesh.graph['H'], input_mesh.graph['W']))
     connect_points_ccs = [set() for _ in connect_points_ccs]
