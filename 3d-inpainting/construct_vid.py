@@ -29,7 +29,11 @@ def run_samples(samples, config):
     for track_type in config['video_postfix']:
         os.makedirs(os.path.join(samples.video_dir, track_type), exist_ok=True)
     print('Contructing Video...')
-    constructer = render_3D.frame_constucter(config, samples.im_file[0], samples.depth_file[0], len(samples.frame_num))
+    first_file = samples.frame_num[0]
+    constructer = render_3D.frame_constucter(config,
+                                             samples.im_file[first_file],
+                                             samples.depth_file[first_file],
+                                             samples.data_num)
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]
         # constructer.load_ply(samples.ldi_file[idx])
