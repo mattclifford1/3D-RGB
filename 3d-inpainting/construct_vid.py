@@ -37,12 +37,12 @@ def run_samples(samples, config):
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]
         # constructer.load_ply(samples.ldi_file[idx])
-        try:
-            frames_dict = constructer.get_frame(samples.ldi_file[idx],
-                                                idx,
-                                                samples.depth_file[idx])
-        except:
-            print('Error with file: ' + samples.ldi_file[idx])
+        # try:
+        frames_dict = constructer.get_frame(samples.ldi_file[idx],
+                                            idx,
+                                            samples.depth_file[idx])
+        # except:
+        #     print('Error with file: ' + samples.ldi_file[idx])
         if config['verbose']:
             print(idx)
             print(samples.depth_file[idx])
