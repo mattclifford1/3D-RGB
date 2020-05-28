@@ -12,6 +12,7 @@ specific: ''
 longer_side_len: 960
 src_dir: nu-data/frames
 tgt_dir: /mnt/storage/scratch/lw15979/pre-depth
+save_vid_dir: /mnt/storage/scratch/lw15979/vids
 load_ply: False
 save_ply: True
 inference_video: True

@@ -13,6 +13,7 @@ specific: ''
 longer_side_len: 960
 src_dir: nu-data/frames
 tgt_dir: nu-est
+save_vid_dir: nu-vids
 load_ply: False
 save_ply: True
 inference_video: True
