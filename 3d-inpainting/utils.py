@@ -948,8 +948,10 @@ def smooth_cntsyn_gap(init_depth_map, mask_region, context_region, init_mask_reg
     return depth_map
 
 def read_MiDaS_depth(disp_fi, disp_rescale=10., h=None, w=None):
-    disp = np.load(disp_fi)
-    # import pdb; pdb.set_trace()
+    if 'npy' in os.path.splitext(disp_fi)[-1]:
+        disp = np.load(disp_fi)
+    else:
+        disp = imageio.imread(disp_fi).astype(np.float32)
     disp = disp - disp.min()
     disp = cv2.blur(disp / disp.max(), ksize=(3, 3)) * disp.max()
     disp = (disp / disp.max()) * disp_rescale
