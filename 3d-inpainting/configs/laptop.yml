@@ -13,7 +13,6 @@ specific: ''
 longer_side_len: 960
 src_dir: nu-data/frames
 tgt_dir: nu-est
-save_vid_dir: nu-vids
 load_ply: False
 save_ply: True
 inference_video: True
@@ -45,3 +44,8 @@ verbose: True
 server: False
 inv_depth: False
 depth_rescale: 1.0
+save_vid_dir: nu-vids
+fps: 24
+vid_format: .mp4
+vid_types: ['control', 'circle', 'zoom-in', 'swing']
+vid_folder: video-frames

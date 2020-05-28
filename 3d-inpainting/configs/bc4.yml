@@ -12,7 +12,6 @@ specific: ''
 longer_side_len: 960
 src_dir: nu-data/frames
 tgt_dir: /mnt/storage/scratch/lw15979/pre-depth
-save_vid_dir: /mnt/storage/scratch/lw15979/vids
 load_ply: False
 save_ply: True
 inference_video: True
@@ -44,3 +43,8 @@ verbose: False
 server: True
 inv_depth: True
 depth_rescale: 3.0
+save_vid_dir: /mnt/storage/scratch/lw15979/vids
+fps: 24
+vid_format: .mp4
+vid_types: ['control', 'circle', 'zoom-in', 'swing']
+vid_folder: video-frames

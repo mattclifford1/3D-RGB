@@ -24,8 +24,8 @@ def list_to_vid(files_dict, config, vid_name):
     else:                         # tile horizontally
         size = (width*num_cams, height*num_cams)
 
-    out_file = os.path.join(config['save_dir'], vid_name+config['vid_format'])
-    os.makedirs(config['save_dir'], exist_ok=True)
+    out_file = os.path.join(config['save_vid_dir'], vid_name+config['vid_format'])
+    os.makedirs(config['save_vid_dir'], exist_ok=True)
     out = cv2.VideoWriter(out_file, cv2.VideoWriter_fourcc(*'DIVX'), config['fps'], size)
 
     print('======= Writing Video =======')
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     config = yaml.load(open(args.config, 'r'))
 
-    files_dict = get_files_dict(config['input_dir'],
+    files_dict = get_files_dict(config['tgt_dir'],
                                 args.vid,
                                 config['vid_folder'],
                                 config['vid_types'])
