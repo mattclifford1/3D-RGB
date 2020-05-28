@@ -29,8 +29,9 @@ def list_to_vid(files_dict, config, vid_name):
     out = cv2.VideoWriter(out_file, cv2.VideoWriter_fourcc(*'DIVX'), config['fps'], size)
 
     print('======= Writing Video =======')
-    for id in tqdm(range(len(files_dict))):
-        img = get_ims(files_dict[id])
+    num_list = sorted(list(files_dict.keys()))
+    for id in tqdm(range(len(num_list))):
+        img = get_ims(files_dict[num_list(id)])
         out.write(img)
     out.release()
 
