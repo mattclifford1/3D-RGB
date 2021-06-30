@@ -13,7 +13,8 @@ def set_device(config):
     else:
         device = "cpu"
         dev = "CPU"
-    print("Running on Device: " + dev)
+    if config['verbose']:
+        print("Running on Device: " + dev)
     return device
 
 

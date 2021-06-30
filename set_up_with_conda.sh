@@ -1,9 +1,11 @@
-#!/bin/sh
+#!/bin/bash
+VENV=3DP
+CONDA_BASE=$(conda info --base)
+source $CONDA_BASE/etc/profile.d/conda.sh
 
-# make conda virtual environment
-echo "============ Setting up Python ============"
-conda create -n 3DP python=3.7 anaconda
-conda activate 3DP
+conda create -n $VENV python=3.7
+conda activate $VENV
+
 pip install --upgrade pip
 pip install -r requirements_conda.txt
 conda install pytorch==1.4.0 torchvision==0.5.0 cudatoolkit==10.1.243 -c pytorch

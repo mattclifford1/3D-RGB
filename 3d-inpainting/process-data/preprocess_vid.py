@@ -53,15 +53,19 @@ class simple_writer():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, default='preprocess_vid.yml',help='Configure of video preprocessing')
+    parser.add_argument('--vid', type=str, help='Specific video to process')
     args = parser.parse_args()
-    config = yaml.load(open(args.config, 'r'))
-    os.makedirs(config['save_dir'], exist_ok=True)
-    os.makedirs(config['completed_dir'], exist_ok=True)
+    config = yaml.safe_load(open(args.config, 'r'))
+    os.makedirs(config['src_dir'], exist_ok=True)
+    # os.makedirs(config['completed_dir'], exist_ok=True)
     vid_list = os.listdir(config['input_dir'])
-    for id in tqdm(range(len(vid_list))):
+    for id in range(len(vid_list)):
         base_file = vid_list[id].split('.')[0]
+        if base_file != args.vid:
+            continue
+        print('Proccessing: '+vid_list[id])
         im_list = get_list_of_ims(config['input_dir'], vid_list[id])
-        simple_writer(im_list, config['save_dir'], vid_list[id])
+        simple_writer(im_list, config['src_dir'], vid_list[id])
         old_dest = os.path.join(config['input_dir'], vid_list[id])
-        new_dest = os.path.join(config['completed_dir'], vid_list[id])
-        os.rename(old_dest, new_dest)
+        # new_dest = os.path.join(config['completed_dir'], vid_list[id])
+        # os.rename(old_dest, new_dest)

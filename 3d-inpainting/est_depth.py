@@ -10,11 +10,8 @@ from tqdm import tqdm
 
 
 def run_samples(samples, config):
-    clock = utils_extra.timer()
     device  = utils_extra.set_device(config)
-    print('Estimating Frames...')
-    print(samples.im_dir)
-    print(samples.im_file)
+    print('Estimating Depth ...')
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]
         # try:
@@ -34,7 +31,6 @@ def run_samples(samples, config):
             print("Depth estimated in: " + clock.run_time())
         # except:
         #     print('Error with file: '+samples.im_file[idx])
-    print("Estimated frames in: " + clock.total_time())
 
 
 if __name__ == '__main__':
@@ -42,7 +38,7 @@ if __name__ == '__main__':
     parser.add_argument('--config', type=str, default='argument.yml',help='Configure of post processing')
     parser.add_argument('--vid', type=str, help='Specific video to process')
     args = parser.parse_args()
-    config = yaml.load(open(args.config, 'r'))
+    config = yaml.safe_load(open(args.config, 'r'))
 
     samples = utils_extra.data_files(config['src_dir'],
                                      config['tgt_dir'],

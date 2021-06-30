@@ -52,7 +52,7 @@ if __name__ == '__main__':
     parser.add_argument('--config', type=str, default='postprocess.yml',help='Configure of post processing')
     parser.add_argument('--vid', type=str, help='Specific video to process')
     args = parser.parse_args()
-    config = yaml.load(open(args.config, 'r'))
+    config = yaml.safe_load(open(args.config, 'r'))
 
     files_dict = get_files_dict(config['tgt_dir'],
                                 args.vid,

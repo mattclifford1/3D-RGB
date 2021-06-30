@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--config', type=str, default='test_vid.yml',help='Configure of post processing')
 parser.add_argument('--dir', type=str, default='frames')
 args = parser.parse_args()
-config = yaml.load(open(args.config, 'r'))
+config = yaml.safe_load(open(args.config, 'r'))
 
 # fake_nums = range(int(config['num_frames']))
 fake_nums = [0, 100, 200]

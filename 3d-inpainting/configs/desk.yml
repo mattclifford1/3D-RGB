@@ -10,8 +10,8 @@ traj_types: ['double-straight-line', 'double-straight-line', 'circle', 'circle',
 video_postfix: ['dolly-zoom-in', 'zoom-in', 'circle', 'swing', 'control']
 specific: ''
 longer_side_len: 960
-src_dir: nu-data/frames
-tgt_dir: nu-data/estimates
+src_dir: vids/frames
+tgt_dir: vids/estimates
 load_ply: False
 save_ply: True
 inference_video: True
@@ -43,8 +43,10 @@ verbose: False
 server: False
 inv_depth: True
 depth_rescale: 3.0
-save_vid_dir: nu-data/estimates/vids-final
+save_vid_dir: vids/output
 fps: 24
 vid_format: .mp4
 vid_types: ['zoom-in']
 vid_folder: video-frames
+input_dir: vids/input
+completed_dir: vids/post

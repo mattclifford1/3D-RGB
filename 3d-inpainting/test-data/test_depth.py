@@ -41,7 +41,7 @@ if __name__ == '__main__':
     parser.add_argument('--config', type=str, default='yaml to control run')
     parser.add_argument('--vid', type=str, help='Specific video to process')
     args = parser.parse_args()
-    config = yaml.load(open(args.config, 'r'))
+    config = yaml.safe_load(open(args.config, 'r'))
     samples = utils_extra.data_files(config['src_dir'],
                                   config['tgt_dir'],
                                   args.vid)

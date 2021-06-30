@@ -62,7 +62,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, default='argument.yml',help='Configure of post processing')
     args = parser.parse_args()
-    config = yaml.load(open(args.config, 'r'))
+    config = yaml.safe_load(open(args.config, 'r'))
 
     samples = utils_extra.data_files(config['src_folder'],
                                   config['depth_folder'],
