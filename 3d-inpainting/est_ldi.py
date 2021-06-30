@@ -66,6 +66,8 @@ def run_samples(samples, config):
     print('Estimating Frames...')
     for id in tqdm(range(samples.data_num)):
         idx = samples.frame_num[id]
+        if os.path.exists(samples.ldi_file[idx]):
+            continue
         # try:
         image = imageio.imread(samples.im_file[idx])
         int_mtx = utils_extra.int_mtx_CPY(image)

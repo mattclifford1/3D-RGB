@@ -24,44 +24,33 @@ from bilateral_filtering import sparse_bilateral_filtering
 import utils_extra
 import render_3D
 
-def run_samples(samples, config):
-    clock = utils_extra.timer()
+def run_sample(samples, config, id):
     for track_type in config['video_postfix']:
         os.makedirs(os.path.join(samples.video_dir, track_type), exist_ok=True)
-    print('Contructing Video...')
     first_file = samples.frame_num[0]
     constructer = render_3D.frame_constucter(config,
                                             samples.im_file[first_file],
                                             samples.depth_file[first_file],
                                             samples.data_num)
-    for id in tqdm(range(samples.data_num)):
-        idx = samples.frame_num[id]
-        # constructer.load_ply(samples.ldi_file[idx])
-        frames_dict = constructer.get_frame(samples.ldi_file[idx],
-                                            idx,
-                                            samples.depth_file[idx])
-        if config['verbose']:
-            print(idx)
-            print(samples.depth_file[idx])
-            print(samples.ldi_file[idx])
-            print("Constructed frame in: " + clock.run_time())
-        for track_type, frame in frames_dict.items():
-            write_file = os.path.join(samples.video_dir, track_type, str(idx)+config['img_format'])
-            cv2.imwrite(write_file, cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
-    print("Constructed videos in: " + clock.total_time())
+    idx = samples.frame_num[id]
+    # constructer.load_ply(samples.ldi_file[idx])
+    frames_dict = constructer.get_frame(samples.ldi_file[idx],
+                                        idx,
+                                        samples.depth_file[idx])
+    for track_type, frame in frames_dict.items():
+        write_file = os.path.join(samples.video_dir, track_type, str(idx)+config['img_format'])
+        cv2.imwrite(write_file, cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, default='argument.yml',help='Configure of post processing')
     parser.add_argument('--vid', type=str, help='Specific video to process')
+    parser.add_argument('--frame', type=int, help='Frame to proces')
     args = parser.parse_args()
     config = yaml.load(open(args.config, 'r'))
     samples = utils_extra.data_files(config['src_dir'],
                                      config['tgt_dir'],
                                      args.vid)
     samples.collect_ldi()
-    for id in tqdm(range(samples.data_num)):
-        # run in separate call to stop memory leakage bug
-        os.system('./run_single-camera-frame.sh '+args.config+' '+args.vid+' '+str(id))
-    # run_samples(samples, config)
+    run_sample(samples, config, args.frame)

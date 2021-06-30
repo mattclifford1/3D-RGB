@@ -30,6 +30,9 @@ import utils_extra
 import imageio
 from mesh import *
 
+import gc
+import sys
+
 '''
 class adaptation for frame constructiong using
 base code from output_3d_photo funciton above
@@ -82,13 +85,13 @@ class frame_constucter:
         take from run scipt - not sure if copy needed or not yet
         LOOK into memory usage here.......
         '''
-        ply = read_ply(file_name)
-        self.verts = ply[0].copy()
-        self.colors = ply[1].copy()
+        self.ply = read_ply(file_name)
+        self.verts = self.ply[0].copy()
+        self.colors = self.ply[1].copy()
         self.colors = self.colors[..., :3]
-        self.faces = ply[2].copy()
-        self.Height = copy.deepcopy(ply[3])
-        self.Width = copy.deepcopy(ply[4])
+        self.faces = self.ply[2].copy()
+        self.Height = copy.deepcopy(self.ply[3])
+        self.Width = copy.deepcopy(self.ply[4])
         # self.hFov = copy.deepcopy(ply[5])
         # self.vFov = copy.deepcopy(ply[6])
         self.extract_info()
@@ -163,25 +166,34 @@ class frame_constucter:
         # print('Running for all poses')
         output_dir = os.path.join(self.config['tgt_dir'], 'video-frames')
         os.makedirs(output_dir, exist_ok=True)
-        normal_canvas = self.get_canvas()
-        anchor, plane_width = self.get_anchor_plane(normal_canvas)
-        normal_canvas.add_data(self.verts,
+        self.normal_canvas = self.get_canvas()
+        anchor, plane_width = self.get_anchor_plane(self.normal_canvas)
+        self.normal_canvas.add_data(self.verts,
                                self.faces,
                                self.colors)
         frames_dict = {}
         for video_pose, video_traj_type in zip(self.videos_poses, self.video_traj_types):
-            img_gen = self.gen_rgb(video_pose[num],
+            self.img_gen = self.gen_rgb(video_pose[num],
                                    video_traj_type,
                                    plane_width,
                                    self.fov,
-                                   normal_canvas,
+                                   self.normal_canvas,
                                    anchor,
                                    self.border)
-            frames_dict[video_traj_type] = img_gen
-            # write_file = os.path.join(output_dir,str(num)+'-'+video_traj_type+'.jpg')
-            # cv2.imwrite(write_file, cv2.cvtColor(img_gen, cv2.COLOR_RGB2BGR))
-           # cv2.imwrite(os.path.join(output_dir, 'crop_stereo'+str(num)+video_traj_type+'.jpg'), cv2.cvtColor((stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8), cv2.COLOR_RGB2BGR))
+            frames_dict[video_traj_type] = self.img_gen
         return frames_dict
+
+    def clean_mem(self):
+
+        del self.ply
+        del self.verts
+        del self.colors
+        del self.faces
+        del self.Height
+        del self.Width
+        del self.normal_canvas
+        del self.img_gen
+        gc.collect() # stop memoryaccumulation
 
     def gen_rgb(self, tp, video_traj_type, plane_width, fov, normal_canvas, anchor, border):
         rel_pose = np.linalg.inv(np.dot(tp, np.linalg.inv(self.ref_pose)))
@@ -221,7 +233,5 @@ class frame_constucter:
             stereo = img[..., :3]
             atop = 0; abuttom = img.shape[0] - img.shape[0] % 2; aleft = 0; aright = img.shape[1] - img.shape[1] % 2
             cropped = (stereo[atop:abuttom, aleft:aright, :3] * 1).astype(np.uint8)
-        # print('saving frame')
-        # cv2.imwrite('tmp/frame'+str(self.im_count)+'.png', cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
-        self.im_count += 1
+        # normal_canvas.canvas.close()
         return img

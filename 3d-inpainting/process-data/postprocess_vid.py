@@ -31,7 +31,7 @@ def list_to_vid(files_dict, config, vid_name):
     print('======= Writing Video =======')
     num_list = sorted(list(files_dict.keys()))
     for id in tqdm(range(len(num_list))):
-        img = get_ims(files_dict[num_list(id)])
+        img = get_ims(files_dict[num_list[id]])
         out.write(img)
     out.release()
 
