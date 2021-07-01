@@ -164,8 +164,8 @@ class frame_constucter:
         self.mean_loc_depth = depth[depth.shape[0]//2, depth.shape[1]//2]
         self.load_ply(ply_file)
         # print('Running for all poses')
-        output_dir = os.path.join(self.config['tgt_dir'], 'video-frames')
-        os.makedirs(output_dir, exist_ok=True)
+        # output_dir = os.path.join(self.config['tgt_dir'], 'video-frames')
+        # os.makedirs(output_dir, exist_ok=True)
         self.normal_canvas = self.get_canvas()
         anchor, plane_width = self.get_anchor_plane(self.normal_canvas)
         self.normal_canvas.add_data(self.verts,
