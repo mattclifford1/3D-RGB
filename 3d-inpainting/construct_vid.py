@@ -21,34 +21,15 @@ from MiDaS.monodepth_net import MonoDepthNet
 import MiDaS.MiDaS_utils as MiDaS_utils
 from bilateral_filtering import sparse_bilateral_filtering
 
+from p_tqdm import p_map
+from functools import partial
+
 import utils_extra
 import render_3D
 
-def run_samples(samples, config):
-    clock = utils_extra.timer()
-    for track_type in config['video_postfix']:
-        os.makedirs(os.path.join(samples.video_dir, track_type), exist_ok=True)
-    print('Contructing Video...')
-    first_file = samples.frame_num[0]
-    constructer = render_3D.frame_constucter(config,
-                                            samples.im_file[first_file],
-                                            samples.depth_file[first_file],
-                                            samples.data_num)
-    for id in tqdm(range(samples.data_num)):
-        idx = samples.frame_num[id]
-        # constructer.load_ply(samples.ldi_file[idx])
-        frames_dict = constructer.get_frame(samples.ldi_file[idx],
-                                            idx,
-                                            samples.depth_file[idx])
-        if config['verbose']:
-            print(idx)
-            print(samples.depth_file[idx])
-            print(samples.ldi_file[idx])
-            print("Constructed frame in: " + clock.run_time())
-        for track_type, frame in frames_dict.items():
-            write_file = os.path.join(samples.video_dir, track_type, str(idx)+config['img_format'])
-            cv2.imwrite(write_file, cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
-    print("Constructed videos in: " + clock.total_time())
+def call_thread(id, config, vid, sh_file='./run_single-camera-frame.sh'):
+    # run in separate call to stop memory leakage bug
+    os.system(sh_file+' '+config+' '+vid+' '+str(id))
 
 
 if __name__ == '__main__':
@@ -61,7 +42,11 @@ if __name__ == '__main__':
                                      config['tgt_dir'],
                                      args.vid)
     samples.collect_ldi()
-    for id in tqdm(range(samples.data_num)):
-        # run in separate call to stop memory leakage bug
-        os.system('./run_single-camera-frame.sh '+args.config+' '+args.vid+' '+str(id))
-    # run_samples(samples, config)
+    # in parrelel
+    r = p_map(partial(call_thread,
+                      config=args.config,
+                      vid=args.vid),
+              list(range(samples.data_num)))
+    # sequencial
+    # for id in tqdm(range(samples.data_num)):
+    #     call_thread(id, args.config, args.vid)
