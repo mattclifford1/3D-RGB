@@ -8,10 +8,10 @@ conda activate $VENV
 # $1 is the vid prefix (project folder) name of vid (without .mp4)
 
 # extract frames
-# python process-data/preprocess_vid.py --config configs/desk.yml --vid $1
+python process-data/preprocess_vid.py --config configs/desk.yml --vid $1
 
 # estimate depth
-# python est_depth.py --config configs/desk.yml --vid $1
+python est_depth.py --config configs/desk.yml --vid $1
 
 # estimate LDI
 python est_ldi.py --config configs/desk.yml --vid $1

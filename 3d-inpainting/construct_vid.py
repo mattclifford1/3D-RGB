@@ -27,9 +27,15 @@ from functools import partial
 import utils_extra
 import render_3D
 
-def call_thread(id, config, vid, sh_file='./run_single-camera-frame.sh'):
+def call_thread(id, config, samples, sh_file='./run_single-camera-frame.sh'):
     # run in separate call to stop memory leakage bug
-    os.system(sh_file+' '+config+' '+vid+' '+str(id))
+    idx = samples.frame_num[id]
+    os.system(sh_file+' '+config+' '+samples.im_file[idx]
+                                +' '+samples.depth_file[idx]
+                                +' '+samples.ldi_file[idx]
+                                +' '+samples.video_dir
+                                +' '+str(idx)
+                                +' '+str(samples.data_num))
 
 
 if __name__ == '__main__':
@@ -45,8 +51,9 @@ if __name__ == '__main__':
     # in parrelel
     r = p_map(partial(call_thread,
                       config=args.config,
-                      vid=args.vid),
-              list(range(samples.data_num)))
+                      samples=samples),
+              list(range(samples.data_num)),
+              num_cpus=os.cpu_count())
     # sequencial
     # for id in tqdm(range(samples.data_num)):
     #     call_thread(id, args.config, args.vid)

@@ -22,11 +22,14 @@ def list_to_vid(files_dict, config, vid_name):
     if num_cams == 4: # 2x2 videos
         size = (width*2, height*2)
     else:                         # tile horizontally
-        size = (width*num_cams, height*num_cams)
+        size = (width*num_cams, height)
 
     out_file = os.path.join(config['save_vid_dir'], vid_name+config['vid_format'])
     os.makedirs(config['save_vid_dir'], exist_ok=True)
-    out = cv2.VideoWriter(out_file, cv2.VideoWriter_fourcc(*'DIVX'), config['fps'], size)
+    out = cv2.VideoWriter(out_file,
+                          cv2.VideoWriter_fourcc(*'DIVX'),
+                          config['fps'],
+                          size)
 
     print('======= Writing Video =======')
     num_list = sorted(list(files_dict.keys()))
