@@ -49,7 +49,19 @@ def path_planning(num_frames, x, y, z, path_type=''):
         cs = interp1d(corner_t, corner_points, axis=0, kind='quadratic')
         spline = cs(t)
         xs, ys, zs = [xx.squeeze() for xx in np.split(spline, 3, 1)]
-    elif path_type == 'straight-pan':
+    elif path_type == 'pan-right':
+        xs, ys, zs = [], [], []
+        xt = np.linspace(x, -x, num_frames)
+        yt = np.linspace(y, -y, num_frames)
+        zt = np.linspace(np.pi, np.pi*2, num_frames)
+        for frame in range(num_frames):
+            xs += [xt[frame]]
+            # ys += [yt[frame]]
+            ys += [0]
+            # zs += [(np.sin(zt[frame])+0.5)*z]
+            zs += [0]
+        xs, ys, zs = np.array(xs), np.array(ys), np.array(zs)
+    elif path_type == 'pan-left':
         xs, ys, zs = [], [], []
         xt = np.linspace(-x, x, num_frames)
         yt = np.linspace(-y, y, num_frames)

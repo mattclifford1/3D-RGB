@@ -53,7 +53,7 @@ if __name__ == '__main__':
                       config=args.config,
                       samples=samples),
               list(range(samples.data_num)),
-              num_cpus=os.cpu_count())
+              num_cpus=os.cpu_count()-2)
     # sequencial
     # for id in tqdm(range(samples.data_num)):
     #     call_thread(id, args.config, args.vid)

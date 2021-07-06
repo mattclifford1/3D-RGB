@@ -13,7 +13,7 @@ def get_ims(files_list):
         bottom = np.concatenate([im_list[2], im_list[3]], axis=1)
         return np.concatenate([top, bottom], axis=0)
     else:
-        return np.concatenate(im_list, axis=1)
+        return np.concatenate(im_list, axis=0)
 
 def list_to_vid(files_dict, config, vid_name):
     img = cv2.imread(files_dict[0][0])
@@ -22,7 +22,7 @@ def list_to_vid(files_dict, config, vid_name):
     if num_cams == 4: # 2x2 videos
         size = (width*2, height*2)
     else:                         # tile horizontally
-        size = (width*num_cams, height)
+        size = (width, height*num_cams)
 
     out_file = os.path.join(config['save_vid_dir'], vid_name+config['vid_format'])
     os.makedirs(config['save_vid_dir'], exist_ok=True)
@@ -60,5 +60,5 @@ if __name__ == '__main__':
     files_dict = get_files_dict(config['tgt_dir'],
                                 args.vid,
                                 config['vid_folder'],
-                                config['vid_types'])
+                                config['video_postfix'])
     list_to_vid(files_dict, config, args.vid)
