@@ -1,11 +1,11 @@
 #!/bin/sh
 
-mkdir 3d-inpainting/checkpoints
+mkdir ../checkpoints
 wget https://filebox.ece.vt.edu/~jbhuang/project/3DPhoto/model/color-model.pth
-mv color-model.pth 3d-inpainting/checkpoints/.
+mv color-model.pth ../checkpoints/.
 wget https://filebox.ece.vt.edu/~jbhuang/project/3DPhoto/model/depth-model.pth
-mv depth-model.pth 3d-inpainting/checkpoints/.
+mv depth-model.pth ../checkpoints/.
 wget https://filebox.ece.vt.edu/~jbhuang/project/3DPhoto/model/edge-model.pth
-mv edge-model.pth 3d-inpainting/checkpoints/.
+mv edge-model.pth ../checkpoints/.
 wget https://filebox.ece.vt.edu/~jbhuang/project/3DPhoto/model/model.pt
-mv model.pt 3d-inpainting/MiDaS/.
+mv model.pt ../MiDaS/.
