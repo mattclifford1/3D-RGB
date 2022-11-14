@@ -1,5 +1,5 @@
 # 3D-RGB -- Full Pipeline of Camera movement for videos
-Currently estimates on a per frame basic (no temporal information used). This will lead to temporal inconsistencies for some videos.
+Currently estimates on a per frame basis (no temporal information used). This will lead to temporal inconsistencies for some videos.
 
 ##
 Setup the Pipeline environment by installing all the dependant packages and downloading all the models using
