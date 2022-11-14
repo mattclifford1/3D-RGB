@@ -1,7 +1,12 @@
 # 3D-RGB -- Full Pipeline of Camera movement for videos
 Currently estimates on a per frame basis (no temporal information used). This will lead to temporal inconsistencies for some videos.
 
-##
+## Instalation
+First clone this repo eg:
+```
+git clone https://github.com/mattclifford1/3D-RGB.git
+```
+
 Setup the Pipeline environment by installing all the dependant packages and downloading all the models using
 ```
 cd setup
