@@ -3,12 +3,12 @@ VENV=3DP
 CONDA_BASE=$(conda info --base)
 source $CONDA_BASE/etc/profile.d/conda.sh
 
-conda create -n $VENV python=3.7
+conda create -n $VENV python=3.7 -y
 conda activate $VENV
 
 pip install --upgrade pip
 pip install -r requirements_conda.txt
-conda install pytorch==1.4.0 torchvision==0.5.0 cudatoolkit==10.1.243 -c pytorch
+conda install pytorch==1.4.0 torchvision==0.5.0 cudatoolkit==10.1.243 -c pytorch -y
 
 echo "============ Download Models ============"
 chmod +x download.sh              # allow execution

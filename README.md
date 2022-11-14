@@ -11,6 +11,7 @@ Setup the Pipeline environment by installing all the dependant packages and down
 ```
 cd setup
 set_up_with_conda.sh
+cd ..
 ```
 
 
@@ -26,7 +27,7 @@ This will:
   - estimate depth for each frame using MiDas
   - estimate the LDI (layered depth image) using
   - then reconstruct the video using new camera postions
-  
+
 ### Adjusting camera parameters
 Use the code configuration file [configs/desk.yml](configs/desk.yml) to adjust the pipeline.
 

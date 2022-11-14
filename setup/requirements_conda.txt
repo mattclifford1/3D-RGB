@@ -6,3 +6,4 @@ networkx==2.3
 scikit-image
 pyyaml
 p_tqdm
+matplotlib

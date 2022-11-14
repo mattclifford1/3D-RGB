@@ -37,6 +37,7 @@ def list_to_vid(files_dict, config, vid_name):
         img = get_ims(files_dict[num_list[id]])
         out.write(img)
     out.release()
+    print(f"video written to : {out_file}")
 
 def get_files_dict(base_dir, vid, inner_dir, cam_type):
     vid_dir = os.path.join(base_dir, vid, inner_dir)

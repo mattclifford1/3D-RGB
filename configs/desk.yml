@@ -10,8 +10,8 @@ traj_types: ['pan-left', 'pan-left', 'pan-left']
 video_postfix: ['pan-left-.05', 'pan-left-.1', 'pan-left-.15']
 specific: ''
 longer_side_len: 960
-src_dir: vids/input/frames
-tgt_dir: vids/estimates
+src_dir: videos/input/frames
+tgt_dir: videos/estimates
 load_ply: False
 save_ply: True
 inference_video: True
@@ -43,10 +43,10 @@ verbose: False
 server: False
 inv_depth: True
 depth_rescale: 3.0
-save_vid_dir: vids/output
+save_vid_dir: videos/output
 fps: 24
 vid_format: .mp4
 vid_folder: video-frames
-input_dir: vids/input
-completed_dir: vids/post
-threads: 5
+input_dir: videos/input
+completed_dir: videos/post
+threads: 1    # change this depending on how much VRAM you have available

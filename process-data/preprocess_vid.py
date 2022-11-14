@@ -59,11 +59,12 @@ if __name__ == '__main__':
     os.makedirs(config['src_dir'], exist_ok=True)
     # os.makedirs(config['completed_dir'], exist_ok=True)
     vid_list = os.listdir(config['input_dir'])
+    print(f"Getting input videos from folder: {config['input_dir']}")
     for id in range(len(vid_list)):
         base_file = vid_list[id].split('.')[0]
         if base_file != args.vid:
             continue
-        print('Proccessing: '+vid_list[id])
+        print('Proccessing video to frames: '+vid_list[id])
         im_list = get_list_of_ims(config['input_dir'], vid_list[id])
         simple_writer(im_list, config['src_dir'], vid_list[id])
         old_dest = os.path.join(config['input_dir'], vid_list[id])
