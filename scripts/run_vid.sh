@@ -5,7 +5,7 @@ source $CONDA_BASE/etc/profile.d/conda.sh
 conda activate $VENV
 
 echo "============ Making Video Sample ============"
-python construct_vid.py --config configs/desk.yml --vid $1
+python scripts/construct_vid.py --config configs/desk.yml --vid $1
 
 echo "============ VIDEO POSTPROCESSING ============"
 python process-data/postprocess_vid.py --config configs/desk.yml --vid $1

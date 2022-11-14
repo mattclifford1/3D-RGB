@@ -16,7 +16,7 @@ cd ..
 
 
 ## Pipeline
-To run the entire method , place videos in [vids/input](vids/input) and use the script [run_local.sh](run_local.sh) to start the pipeline eg:
+To run the entire method , place videos in [vids/input](vids/input) and use the script [run_pipeline.sh](run_pipeline.sh) to start the pipeline eg:
 ```
 ./run_local xxx
 ```

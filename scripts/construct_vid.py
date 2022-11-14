@@ -2,13 +2,14 @@ import numpy as np
 import argparse
 import glob
 import os
+import shutil
 from functools import partial
 import vispy
 import scipy.misc as misc
 from tqdm import tqdm
 import yaml
 import time
-import sys
+import sys; sys.path.append('..'); sys.path.append('.')
 import mesh
 from utils import get_MiDaS_samples, read_MiDaS_depth
 import torch
@@ -27,7 +28,7 @@ from functools import partial
 import utils_extra
 import render_3D
 
-def call_thread(id, config, samples, sh_file='./run_single-camera-frame.sh'):
+def call_thread(id, config, samples, sh_file='./scripts/run_single-camera-frame.sh'):
     # run in separate call to stop memory leakage bug
     idx = samples.frame_num[id]
     os.system(sh_file+' '+config+' '+samples.im_file[idx]
@@ -48,12 +49,14 @@ if __name__ == '__main__':
                                      config['tgt_dir'],
                                      args.vid)
     samples.collect_ldi()
+    shutil.rmtree(samples.video_dir)
     # in parrelel
+    print(f"Constructing Frames using {config['video_construct_threads']} processes")
     r = p_map(partial(call_thread,
                       config=args.config,
                       samples=samples),
               list(range(samples.data_num)),
-              num_cpus=os.cpu_count()-2)
+              num_cpus=config['video_construct_threads'])
     # sequencial
     # for id in tqdm(range(samples.data_num)):
     #     call_thread(id, args.config, args.vid)

@@ -14,7 +14,7 @@ python process-data/preprocess_vid.py --config configs/desk.yml --vid $1
 python est_depth.py --config configs/desk.yml --vid $1
 
 # estimate LDI
-python est_ldi.py --config configs/desk.yml --vid $1
+python scripts/est_ldi.py --config configs/desk.yml --vid $1
 
 # contruct video
-./run_vid.sh $1
+./scripts/run_vid.sh $1

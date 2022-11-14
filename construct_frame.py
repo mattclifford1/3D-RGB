@@ -8,7 +8,7 @@ import scipy.misc as misc
 from tqdm import tqdm
 import yaml
 import time
-import sys
+import sys; sys.path.append('..'); sys.path.append('.')
 import mesh
 from utils import get_MiDaS_samples, read_MiDaS_depth
 import torch

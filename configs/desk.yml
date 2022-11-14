@@ -1,13 +1,13 @@
+x_shift_range: [0.00, 0.00, 0.00, 0.00]
+y_shift_range: [0.00, 0.00, 0.00, 0.00]
+z_shift_range: [0.00, 0.025, 0.05, 0.1]
+traj_types: ['control', 'straight-line', 'straight-line', 'straight-line']
+video_postfix: ['control-0', 'straight-line-0.025', 'straight-line-0.05', 'straight-line-0.1']
+fps: 40
 depth_edge_model_ckpt: checkpoints/edge-model.pth
 depth_feat_model_ckpt: checkpoints/depth-model.pth
 rgb_feat_model_ckpt: checkpoints/color-model.pth
 MiDaS_model_ckpt: MiDaS/model.pt
-fps: 40
-x_shift_range: [-0.03, -0.07, -0.1, -0.1]
-y_shift_range: [0.00, 0.00, -0.02, -0.00]
-z_shift_range: [-0.05, -0.05, -0.07, -0.07]
-traj_types: ['pan-left', 'pan-left', 'pan-left']
-video_postfix: ['pan-left-.05', 'pan-left-.1', 'pan-left-.15']
 specific: ''
 longer_side_len: 960
 src_dir: videos/input/frames
@@ -49,4 +49,5 @@ vid_format: .mp4
 vid_folder: video-frames
 input_dir: videos/input
 completed_dir: videos/post
-threads: 1    # change this depending on how much VRAM you have available
+ldi_threads: 1    # change this depending on how much GPU VRAM you have available
+video_construct_threads: 12  # change this depending on how many cpu cores/available RAM

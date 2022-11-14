@@ -8,7 +8,7 @@ import scipy.misc as misc
 from tqdm import tqdm
 import yaml
 import time
-import sys
+import sys; sys.path.append('..'); sys.path.append('.')
 import mesh
 from utils import get_MiDaS_samples, read_MiDaS_depth
 import torch
@@ -25,7 +25,7 @@ from bilateral_filtering import sparse_bilateral_filtering
 import utils_extra
 from p_tqdm import p_map
 
-def call_thread(id, config, samples, sh_file='./run_single-ldi.sh'):
+def call_thread(id, config, samples, sh_file='./scripts/run_single-ldi.sh'):
     # run in separate call to stop memory leakage bug
     idx = samples.frame_num[id]
     os.system(sh_file+' '+config+' '+samples.im_file[idx]
@@ -44,13 +44,13 @@ if __name__ == '__main__':
                                      config['tgt_dir'],
                                      args.vid)
     samples.collect_depth()
-    print('Estimating LDI ...')
+    print(f"Estimating LDI using {config['ldi_threads']} processes")
     # in parrelel
     r = p_map(partial(call_thread,
                       config=args.config,
                       samples=samples),
               list(range(samples.data_num)),
-              num_cpus=config['threads'])
+              num_cpus=config['ldi_threads'])
     # sequencial
     # for id in tqdm(range(samples.data_num)):
     #     call_thread(id, args.config, args.vid)
