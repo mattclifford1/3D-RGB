@@ -7,3 +7,4 @@ scikit-image
 pyyaml
 p_tqdm
 matplotlib
+PyQt5
