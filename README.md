@@ -18,7 +18,7 @@ cd ..
 ## Pipeline
 To run the entire method , place videos in [vids/input](vids/input) and use the script [run_pipeline.sh](run_pipeline.sh) to start the pipeline eg:
 ```
-./run_local xxx
+./run_pipeline xxx
 ```
 where xxx is the vid prefix (project folder) name of vid (without .mp4).
 
