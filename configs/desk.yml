@@ -49,5 +49,5 @@ vid_format: .mp4
 vid_folder: video-frames
 input_dir: videos/input
 completed_dir: videos/post
-ldi_threads: 1    # change this depending on how much GPU VRAM you have available
+ldi_threads: 5    # change this depending on how much GPU VRAM you have available
 video_construct_threads: 12  # change this depending on how many cpu cores/available RAM
