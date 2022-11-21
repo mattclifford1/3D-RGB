@@ -24,10 +24,11 @@ To run the entire method , place videos in [vids/input](vids/input) and use the 
 where xxx is the vid prefix (project folder) name of vid (without .mp4).
 
 This will:
-  - extract video into frames
-  - estimate depth for each frame using MiDas
-  - estimate the LDI (layered depth image) using
-  - then reconstruct the video using new camera postions
+  - extract video into frames (videos/input/frames/xxx)
+  - estimate depth for each frame using MiDas (videos/estimates/xxx/depth)
+  - estimate the LDI (layered depth image) using (videos/estimates/xxx/ldi)
+  - reconstruct the frames using new camera postions (videos/estimates/xxx/video-frames)
+  - convert the new frames into a video (videos/output/xxx)
 
 ### Adjusting camera parameters
 Use the code configuration file [configs/desk.yml](configs/desk.yml) to adjust the pipeline.
