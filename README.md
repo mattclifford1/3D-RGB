@@ -11,7 +11,7 @@ cd 3D-RGB/
 Setup the Pipeline environment by installing all the dependant packages and downloading all the models using
 ```
 cd setup
-set_up_with_conda.sh
+./set_up_with_conda.sh
 cd ..
 ```
 
