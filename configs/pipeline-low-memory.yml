@@ -12,8 +12,8 @@ completed_dir: videos/post
 gpu_ids: 0
 fps: 24
 vid_format: .mp4
-ldi_threads: 5    # change this depending on how much GPU VRAM you have available
-video_construct_threads: 12  # change this depending on how many cpu cores/available RAM
+ldi_threads: 1    # change this depending on how much GPU VRAM you have available
+video_construct_threads: 4  # change this depending on how many cpu cores/available RAM
 depth_edge_model_ckpt: checkpoints/edge-model.pth
 depth_feat_model_ckpt: checkpoints/depth-model.pth
 rgb_feat_model_ckpt: checkpoints/color-model.pth
